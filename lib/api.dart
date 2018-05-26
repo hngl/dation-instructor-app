@@ -34,9 +34,12 @@ List<CourseInstance> createCourseInstanceList(List data) {
   List<CourseInstance> list = new List();
   for (int i = 0; i < data.length; i++) {
     CourseInstance courseInstance = new CourseInstance(
-        data[i]["name"],
-        DateTime.parse(data[i]["startDate"]),
-        data[i]["remainingAttendeeCapacity"],
+      data[i]["name"],
+      DateTime.parse(data[i]["startDate"]),
+      ccvCode: data[i]["ccvCode"],
+      code95PracticeHours: data[i]["code95PracticeHours"],
+      code95TheoryHours: data[i]["code95TheoryHours"],
+      remainingAttendeeCapacity: data[i]["remainingAttendeeCapacity"],
     );
     list.add(courseInstance);
   }
@@ -45,11 +48,20 @@ List<CourseInstance> createCourseInstanceList(List data) {
 
 class CourseInstance {
   String name;
-
   DateTime startDate;
-
+  String ccvCode;
+  int code95PracticeHours;
+  int code95TheoryHours;
   int remainingAttendeeCapacity;
-  CourseInstance(this.name, this.startDate, this.remainingAttendeeCapacity);
+
+  CourseInstance(
+    this.name,
+    this.startDate, {
+    this.ccvCode,
+    this.code95PracticeHours,
+    this.code95TheoryHours,
+    this.remainingAttendeeCapacity,
+  });
 
   @override
   String toString() {
