@@ -36,7 +36,16 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new CourseInstancesPage();
+    return new Scaffold(
+      body: new CourseInstancesPage(),
+      floatingActionButton: new FloatingActionButton(
+          heroTag: 'experimentFAB',
+          child: new Icon(Icons.play_arrow),
+          backgroundColor: Colors.redAccent,
+          onPressed: _doExperiment,
+          mini: true
+      ),
+    );
   }
 }
 
@@ -58,14 +67,10 @@ class CourseInstancesPage extends StatelessWidget {
             // Shows the real data with the data retrieved.
             List courseInstances = snapshot.data;
             return new ListView(
-              children: createCourseInstanceSummaryWidgets(
-                  courseInstances, context),
+              children:
+                  createCourseInstanceSummaryWidgets(courseInstances, context),
             );
           }),
-      floatingActionButton: new FloatingActionButton(
-          child: new Icon(Icons.play_arrow),
-          backgroundColor: Colors.redAccent,
-          onPressed: _doExperiment),
     );
   }
 
