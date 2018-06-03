@@ -194,16 +194,56 @@ class AppointmentDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dateFormatter = new DateFormat('dd MMMM y H:mm');
 
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(appointment.itemType),
       ),
       body: new ListView(children: <Widget>[
+        // Item Type
+        new ListTile(
+          leading: new Icon(Icons.label),
+          title: new Text(appointment.itemType),
+        ),
+        // Date
         new ListTile(
           leading: new Icon(Icons.event),
-          title: new Text(dateFormatter.format(appointment.start)),
+          title: new Text(new DateFormat('dd MMMM y').format(appointment.start)),
+        ),
+        // Start time
+        new ListTile(
+          leading: new Icon(Icons.timelapse),
+          title: new Text(
+              new DateFormat('HH:MM').format(appointment.start)
+                  + ' - ' +
+                  new DateFormat('HH:MM').format(appointment.stop)
+
+          ),
+        ),
+        // Students
+        new ListTile(
+          leading: new Icon(Icons.people),
+          title: new Wrap(
+              spacing: 8.0,
+              children: appointment.students.map((student) {
+                  return new Chip(label: new Text(student.name));
+                }).toList()
+          ),
+        ),
+        // Vehicles
+        new ListTile(
+          leading: new Icon(Icons.directions_car),
+          title: new Wrap(
+              spacing: 8.0,
+              children: appointment.students.map((student) {
+                return new Chip(label: new Text('Grijze Volvo'));
+              }).toList()
+          ),
+        ),
+        // Remarks
+        new ListTile(
+          leading: new Icon(Icons.comment),
+          title: new Text(appointment.remark)
         ),
       ]),
     );

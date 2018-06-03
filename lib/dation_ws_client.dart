@@ -49,51 +49,35 @@ class DationWsClient {
     List<AgendaEvent> events = new List();
     for (xml.XmlElement eventNode in items) {
       AgendaEvent event;
-      switch (eventNode.findElements('type').first.text) {
-        case 'blok':
-          {
-            event = new AgendaBlock(
-              start: _unixToDateTime(_childText(eventNode, 'start')),
-              stop: _unixToDateTime(_childText(eventNode, 'stop')),
-            );
+      if (eventNode.findElements('type').first.text == 'blok') {
+        event = new AgendaBlock(
+          start: _unixToDateTime(_childText(eventNode, 'start')),
+          stop: _unixToDateTime(_childText(eventNode, 'stop')),
+        );
+      } else {
+        print("DationWsClient: Parsing xml for 'les'");
+        List<Student> students = new List();
+        if (eventNode.findElements('studentsList').length > 0) {
+          print("Element 'studentsList' found");
+          for (var studentNode in eventNode
+              .findElements('studentsList')
+              .first
+              .findElements('item')) {
+            students.add(new Student(
+              int.parse(studentNode.findElements('id').first.text),
+              studentNode.findElements('name').first.text,
+            ));
           }
-          break;
+        }
 
-        case 'les':
-          {
-            print("DationWsClient: Parsing xml for 'les'");
-            List<Student> students = new List();
-            if (eventNode.findElements('studentsList').length > 0) {
-              print("Element 'studentsList' found");
-              for (var studentNode in eventNode
-                  .findElements('studentsList')
-                  .first
-                  .findElements('item')) {
-                students.add(new Student(
-                  int.parse(studentNode.findElements('id').first.text),
-                  studentNode.findElements('name').first.text,
-                ));
-              }
-            }
-
-            print('DationWsClient: Populating Appointment');
-            event = new AgendaAppointment(
-                start: _unixToDateTime(_childText(eventNode, 'start')),
-                stop: _unixToDateTime(_childText(eventNode, 'stop')),
-                itemType: _childText(eventNode, 'itemtype'),
-                students: students);
-            print('DationWsClient: Appointment populated');
-          }
-          break;
-
-        default:
-          {
-            throw new Exception("Undefined agenda block type ${eventNode
-                .findElements('type')
-                .first
-                .text}");
-          }
-          break;
+        print('DationWsClient: Populating Appointment');
+        event = new AgendaAppointment(
+            start: _unixToDateTime(_childText(eventNode, 'start')),
+            stop: _unixToDateTime(_childText(eventNode, 'stop')),
+            itemType: _childText(eventNode, 'itemtype'),
+            remark: _childText(eventNode, 'opmerkingen'),
+            students: students);
+        print('DationWsClient: Appointment populated');
       }
 
       events.add(event);
@@ -137,8 +121,10 @@ class AgendaAppointment extends AgendaEvent {
   DateTime stop;
   String itemType;
   List<Student> students;
+  String remark = '';
 
-  AgendaAppointment({this.start, this.stop, this.itemType, this.students});
+  AgendaAppointment(
+      {this.start, this.stop, this.itemType, this.students, this.remark});
 
   @override
   String toString() {
