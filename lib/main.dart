@@ -116,9 +116,21 @@ class AgendaPage extends StatelessWidget {
             return new Center(
               child: new ThemedCircularProgressIndicator(),
             );
+
           List events = snapshot.data;
-          return new ListView(
-            children: _buildEventSummaries(context, events),
+
+          return new Column(
+            children: <Widget>[
+              new Container(
+                  padding: const EdgeInsets.all(14.0),
+                  child: new Text(
+                    new DateFormat('dd MMMM y').format(DateTime.now()),
+                    style: new TextStyle(color: Theme.of(context).accentColor),
+                  )),
+              new Expanded(
+                  child: new ListView(
+                      children: _buildEventSummaries(context, events)))
+            ],
           );
         });
   }
