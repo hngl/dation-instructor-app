@@ -13,6 +13,11 @@ class DationWsClient {
     agendaSoapClient = new SoapClient("$host//webservice/mobile/agenda.php");
   }
 
+  /// Parse string containing seconds since Unix Epoch into DateTime
+  DateTime _unixToDateTime(String unix){
+    return new DateTime.fromMillisecondsSinceEpoch(int.parse(unix)*1000);
+  }
+
   Future<List<AgendaEvent>> getAgendaBlocks(
       {Instructor instructor, DateTime date}) async {
     int requestedTimeStamp = (date.millisecondsSinceEpoch / 1000).floor();
@@ -43,10 +48,8 @@ class DationWsClient {
         case 'blok':
           {
             event = new AgendaBlock(
-                start: new DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(eventNode.findElements('start').first.text)),
-                stop: new DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(eventNode.findElements('start').first.text))
+                start: _unixToDateTime(eventNode.findElements('start').first.text),
+                stop: _unixToDateTime(eventNode.findElements('stop').first.text)
             );
           }
           break;
@@ -54,10 +57,8 @@ class DationWsClient {
         case 'les':
           {
             event = new AgendaAppointment(
-                start: new DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(eventNode.findElements('start').first.text)),
-                stop: new DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(eventNode.findElements('start').first.text)),
+                start: _unixToDateTime(eventNode.findElements('start').first.text),
+                stop: _unixToDateTime(eventNode.findElements('stop').first.text),
                 itemType: eventNode.findElements('itemtype').first.text
             );
           }

@@ -3,20 +3,10 @@ import 'package:dation_app/dation_ws_client.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-final String wsHost = 'https://dashboard.dation.nl';
+final String _wsHost = 'https://dashboard.dation.nl';
 
 void main() {
   runApp(new MyApp());
-}
-
-void _doExperiment() {
-  var client = new DationWsClient('$wsHost');
-  client.setTenant(new Tenant(873, 'dation'));
-  client.setUser(new User(1, 'beheerder'));
-  client
-      .getAgendaBlocks(instructor: new Instructor(1), date: new DateTime.now())
-      .then((List blocks) => blocks.forEach((block) => print(block.toString())))
-      .catchError((e) => print(e.toString()));
 }
 
 class MyApp extends StatelessWidget {
@@ -35,12 +25,12 @@ class MyApp extends StatelessWidget {
 class MenuItem {
   String title;
   IconData icon;
+
   MenuItem(this.title, this.icon);
 }
 
 // Main layout and navigation
 class HomePage extends StatefulWidget {
-
   final drawerItems = [
     new MenuItem('Agenda', Icons.calendar_today),
     new MenuItem('Leerlingen', Icons.people),
@@ -51,7 +41,6 @@ class HomePage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return new HomePageState();
   }
-
 }
 
 class HomePageState extends State<HomePage> {
@@ -81,14 +70,12 @@ class HomePageState extends State<HomePage> {
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var d = widget.drawerItems[i];
-      drawerOptions.add(
-          new ListTile(
-            leading: new Icon(d.icon),
-            title: new Text(d.title),
-            selected: i == _selectedDrawerIndex,
-            onTap: () => _onSelectItem(i),
-          )
-      );
+      drawerOptions.add(new ListTile(
+        leading: new Icon(d.icon),
+        title: new Text(d.title),
+        selected: i == _selectedDrawerIndex,
+        onTap: () => _onSelectItem(i),
+      ));
     }
 
     return new Scaffold(
@@ -107,21 +94,67 @@ class HomePageState extends State<HomePage> {
         ),
       ),
       body: _getDrawerItemWidget(_selectedDrawerIndex),
-      floatingActionButton: new FloatingActionButton(
-          heroTag: 'experimentFAB',
-          child: new Icon(Icons.play_arrow),
-          backgroundColor: Colors.redAccent,
-          onPressed: _doExperiment,
-          mini: true
-      ),
     );
   }
 }
 
 class AgendaPage extends StatelessWidget {
+  final client = new DationWsClient(_wsHost);
+
+  AgendaPage() {
+    client.setTenant(new Tenant(873, 'dation'));
+    client.setUser(new User(1, 'beheerder'));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: new Text('Agenda'));
+    return new FutureBuilder(
+        future: client.getAgendaBlocks(
+            instructor: new Instructor(1), date: new DateTime.now()),
+        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+          if (!snapshot.hasData)
+            // Shows progress indicator until the data is load.
+            return new Center(
+              child: new CircularProgressIndicator(),
+            );
+          List events = snapshot.data;
+          return new ListView(
+            children: _buildEventSummaries(context, events),
+          );
+        });
+  }
+
+  List<Widget> _buildEventSummaries(
+      BuildContext context, List<AgendaEvent> events) {
+    List<Widget> widgetList = new List<Widget>();
+    if (events != null) {
+      var timeFormatter = new DateFormat('HH:mm');
+      for (var event in events) {
+        var tile;
+
+        if (event is AgendaAppointment) {
+          tile = new ListTile(
+            leading: new Column(children: <Widget>[
+              new Text(timeFormatter.format(event.start)),
+              new Text(timeFormatter.format(event.stop)),
+            ]),
+            title: new Text(event.itemType),
+          );
+        }
+        if (event is AgendaBlock) {
+          tile = new ListTile(
+            leading: new Column(children: <Widget>[
+              new Text(timeFormatter.format(event.start)),
+              new Text(timeFormatter.format(event.stop)),
+            ]),
+            title: new Text('(vrij blok)'),
+          );
+        }
+
+        widgetList.add(tile);
+      }
+    }
+    return widgetList;
   }
 }
 
@@ -130,7 +163,6 @@ class StudentsListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Center(child: new Text('Leerlingen'));
   }
-
 }
 
 class CourseInstancesPage extends StatelessWidget {
