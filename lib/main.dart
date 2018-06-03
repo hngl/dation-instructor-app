@@ -16,8 +16,7 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
         title: 'Dation',
         theme: new ThemeData(
-          primaryColor: Colors.purple,
-        ),
+            primaryColor: Colors.purple, accentColor: Colors.blueAccent),
         home: new HomePage());
   }
 }
@@ -115,7 +114,7 @@ class AgendaPage extends StatelessWidget {
           if (!snapshot.hasData)
             // Shows progress indicator until the data is load.
             return new Center(
-              child: new CircularProgressIndicator(),
+              child: new ThemedCircularProgressIndicator(),
             );
           List events = snapshot.data;
           return new ListView(
@@ -216,7 +215,7 @@ class CourseInstancesPage extends StatelessWidget {
             if (!snapshot.hasData)
               // Shows progress indicator until the data is load.
               return new Center(
-                child: new CircularProgressIndicator(),
+                child: new ThemedCircularProgressIndicator(),
               );
             // Shows the real data with the data retrieved.
             List courseInstances = snapshot.data;
@@ -255,6 +254,14 @@ class CourseInstancesPage extends StatelessWidget {
       }
     }
     return widgetList;
+  }
+}
+
+class ThemedCircularProgressIndicator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new CircularProgressIndicator(
+        valueColor: new AlwaysStoppedAnimation(Theme.of(context).primaryColor));
   }
 }
 
