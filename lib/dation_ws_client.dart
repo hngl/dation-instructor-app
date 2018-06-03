@@ -64,7 +64,7 @@ class DationWsClient {
             print("DationWsClient: Parsing xml for 'les'");
             List<Student> students = new List();
             if (eventNode.findElements('studentsList').length > 0) {
-              print('studentsList found');
+              print("Element 'studentsList' found");
               for (var studentNode in eventNode
                   .findElements('studentsList')
                   .first

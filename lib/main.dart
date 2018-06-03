@@ -140,12 +140,16 @@ class AgendaPage extends StatelessWidget {
               ]),
               trailing:
                   new Icon(Icons.edit, color: Theme.of(context).primaryColor),
-              title: new Row(children: [
-                new Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: new Text(event.itemType)),
-                new Chip(label: new Text(event.students[0].name))
-              ]),
+              title: new Wrap(
+                  spacing: 8.0,
+                  children: new List.from([
+                    new Padding(
+                        padding: const EdgeInsets.only(top: 6.0),
+                        child: new Text(event.itemType))
+                  ])
+                    ..addAll(event.students.map((student) {
+                      return new Chip(label: new Text(student.name));
+                    }))),
               onTap: () {
                 Navigator.push(
                     context,
