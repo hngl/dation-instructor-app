@@ -20,7 +20,6 @@ void _doExperiment() {
 }
 
 class MyApp extends StatelessWidget {
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -29,14 +28,12 @@ class MyApp extends StatelessWidget {
         theme: new ThemeData(
           primaryColor: Colors.purple,
         ),
-        home: new HomePage()
-    );
+        home: new HomePage());
   }
 }
 
 // Main layout and navigation
 class HomePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return new CourseInstancesPage();
@@ -44,7 +41,6 @@ class HomePage extends StatelessWidget {
 }
 
 class CourseInstancesPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -56,11 +52,9 @@ class CourseInstancesPage extends StatelessWidget {
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData)
               // Shows progress indicator until the data is load.
-              return new Scaffold(
-                    body: new Center(
-                      child: new CircularProgressIndicator(),
-                    ),
-                  );
+              return new Center(
+                child: new CircularProgressIndicator(),
+              );
             // Shows the real data with the data retrieved.
             List courseInstances = snapshot.data;
             return new ListView(
@@ -96,14 +90,13 @@ class CourseInstancesPage extends StatelessWidget {
                   context,
                   new MaterialPageRoute(
                       builder: (BuildContext context) =>
-                      new CourseInstanceDetailPage(courseInstance)));
+                          new CourseInstanceDetailPage(courseInstance)));
             });
         widgetList.add(listItem);
       }
     }
     return widgetList;
   }
-
 }
 
 class CourseInstanceDetailPage extends StatelessWidget {
