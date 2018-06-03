@@ -131,15 +131,28 @@ class AgendaPage extends StatelessWidget {
       var timeFormatter = new DateFormat('HH:mm');
       for (var event in events) {
         var tile;
-
+        print("Building widget for ${event}");
         if (event is AgendaAppointment) {
           tile = new ListTile(
-            leading: new Column(children: <Widget>[
-              new Text(timeFormatter.format(event.start)),
-              new Text(timeFormatter.format(event.stop)),
-            ]),
-            title: new Text(event.itemType),
-          );
+              leading: new Column(children: <Widget>[
+                new Text(timeFormatter.format(event.start)),
+                new Text(timeFormatter.format(event.stop)),
+              ]),
+              trailing:
+                  new Icon(Icons.edit, color: Theme.of(context).primaryColor),
+              title: new Row(children: [
+                new Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: new Text(event.itemType)),
+                new Chip(label: new Text(event.students[0].name))
+              ]),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            new AppointmentDetailPage(event)));
+              });
         }
         if (event is AgendaBlock) {
           tile = new ListTile(
@@ -148,6 +161,7 @@ class AgendaPage extends StatelessWidget {
               new Text(timeFormatter.format(event.stop)),
             ]),
             title: new Text('(vrij blok)'),
+            //trailing: new Icon(Icons.add),
           );
         }
 
@@ -155,6 +169,29 @@ class AgendaPage extends StatelessWidget {
       }
     }
     return widgetList;
+  }
+}
+
+class AppointmentDetailPage extends StatelessWidget {
+  final AgendaAppointment appointment;
+
+  AppointmentDetailPage(this.appointment);
+
+  @override
+  Widget build(BuildContext context) {
+    var dateFormatter = new DateFormat('dd MMMM y H:mm');
+
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(appointment.itemType),
+      ),
+      body: new ListView(children: <Widget>[
+        new ListTile(
+          leading: new Icon(Icons.event),
+          title: new Text(dateFormatter.format(appointment.start)),
+        ),
+      ]),
+    );
   }
 }
 
