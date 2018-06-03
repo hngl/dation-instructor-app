@@ -56,12 +56,11 @@ class CourseInstancesPage extends StatelessWidget {
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData)
               // Shows progress indicator until the data is load.
-              return new MaterialApp(
-                  home: new Scaffold(
+              return new Scaffold(
                     body: new Center(
                       child: new CircularProgressIndicator(),
                     ),
-                  ));
+                  );
             // Shows the real data with the data retrieved.
             List courseInstances = snapshot.data;
             return new ListView(
