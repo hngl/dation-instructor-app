@@ -1,6 +1,9 @@
-import 'package:dation_app/api.dart';
+import 'package:dation_app/dation_rest_api_client.dart';
+import 'package:dation_app/dation_ws_client.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
+final String wsHost = 'https://dashboard.dation.nl';
 
 void main() {
   runApp(new MyApp());
@@ -37,6 +40,10 @@ class MyApp extends StatelessWidget {
                       courseInstances, context),
                 );
               }),
+          floatingActionButton: new FloatingActionButton(
+              child: new Icon(Icons.play_arrow),
+              backgroundColor: Colors.redAccent,
+              onPressed: _doExperiment),
         ));
   }
 
@@ -57,14 +64,26 @@ class MyApp extends StatelessWidget {
             title: new Text(courseInstance.name),
             subtitle: new Text(dateFormatter.format(courseInstance.startDate)),
             onTap: () {
-              Navigator.push(context, new MaterialPageRoute(builder:
-                  (BuildContext context) => new CourseInstanceDetailWidget(courseInstance)));
-            }
-        );
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          new CourseInstanceDetailWidget(courseInstance)));
+            });
         widgetList.add(listItem);
       }
     }
     return widgetList;
+  }
+
+  void _doExperiment() {
+    var client = new DationWsClient('$wsHost');
+    client.setTenant(new Tenant(873, 'dation'));
+    client.setUser(new User(1, 'beheerder'));
+    client
+        .getAgendaBlocks(instructor: new Instructor(1), date: new DateTime.now())
+        .then((List blocks) => blocks.forEach((block) => print(block.toString())))
+        .catchError((e) => print(e.toString()));
   }
 }
 
@@ -84,21 +103,19 @@ class CourseInstanceDetailWidget extends StatelessWidget {
       body: new ListView(children: <Widget>[
         new ListTile(
           leading: new Icon(Icons.event),
-            title: new Text(dateFormatter.format(courseInstance.startDate)),
+          title: new Text(dateFormatter.format(courseInstance.startDate)),
         ),
         new ListTile(
-          leading: new Icon(Icons.verified_user),
-          title: new Text("${courseInstance.code95TheoryHours} uur theorie en ${courseInstance.code95TheoryHours} uur praktijk"),
-          subtitle: new Text('Code 95')
-        ),
+            leading: new Icon(Icons.verified_user),
+            title: new Text("${courseInstance
+                .code95TheoryHours} uur theorie en ${courseInstance
+                .code95TheoryHours} uur praktijk"),
+            subtitle: new Text('Code 95')),
         new ListTile(
-          leading: new Icon(Icons.event_seat),
-          title: new Text(
-              courseInstance.remainingAttendeeCapacity > 0 ?
-              "${courseInstance.remainingAttendeeCapacity} plekken vrij" :
-                  "volgeboekt"
-          )
-        ),
+            leading: new Icon(Icons.event_seat),
+            title: new Text(courseInstance.remainingAttendeeCapacity > 0
+                ? "${courseInstance.remainingAttendeeCapacity} plekken vrij"
+                : "volgeboekt")),
       ]),
     );
   }
