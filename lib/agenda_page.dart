@@ -43,15 +43,13 @@ class AgendaPage extends StatelessWidget {
       var timeFormatter = new DateFormat('HH:mm');
       for (var event in events) {
         var tile;
-        print("Building widget for ${event}");
+        print("Building widget for $event");
         if (event is AgendaAppointment) {
           tile = new ListTile(
               leading: new Column(children: <Widget>[
                 new Text(timeFormatter.format(event.start)),
                 new Text(timeFormatter.format(event.stop)),
               ]),
-              trailing:
-                  new Icon(Icons.edit, color: Theme.of(context).primaryColor),
               title: new Wrap(
                   spacing: 8.0,
                   children: new List.from([
@@ -62,12 +60,14 @@ class AgendaPage extends StatelessWidget {
                     ..addAll(event.students.map((student) {
                       return new Chip(label: new Text(student.name));
                     }))),
+              trailing:
+              new Icon(Icons.edit, color: Theme.of(context).primaryColor),
               onTap: () {
                 Navigator.push(
                     context,
                     new MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            new AppointmentDetailPage(event)));
+                            new AppointmentDetailsPage(event)));
               });
         }
         if (event is AgendaBlock) {
@@ -77,7 +77,15 @@ class AgendaPage extends StatelessWidget {
               new Text(timeFormatter.format(event.stop)),
             ]),
             title: new Text('(vrij blok)'),
-            //trailing: new Icon(Icons.add),
+            trailing:
+            new Icon(Icons.add, color: Theme.of(context).primaryColor),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    new MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                        new AppointmentDetailsPage(new AgendaAppointment(start:event.start, stop:event.stop))));
+              }
           );
         }
 
@@ -88,22 +96,24 @@ class AgendaPage extends StatelessWidget {
   }
 }
 
-class AppointmentDetailPage extends StatelessWidget {
+class AppointmentDetailsPage extends StatelessWidget {
   final AgendaAppointment appointment;
 
-  AppointmentDetailPage(this.appointment);
+  AppointmentDetailsPage(this.appointment);
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("Building AppointmentDetailsPage for $appointment {students: ${appointment.students}, remark: ${appointment.remark}}");
+
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(appointment.itemType),
+        title: new Text(appointment.itemType ?? 'Nieuwe afspraak'),
       ),
       body: new ListView(children: <Widget>[
         // Item Type
         new ListTile(
           leading: new Icon(Icons.label),
-          title: new Text(appointment.itemType),
+          title: new Text(appointment.itemType ?? '(onbekend)'),
         ),
         // Date
         new ListTile(
@@ -121,7 +131,7 @@ class AppointmentDetailPage extends StatelessWidget {
         // Students
         new ListTile(
           leading: new Icon(Icons.people),
-          title: new Wrap(
+          title: appointment.students == null ? new Text('(geen leerlingen)') : new Wrap(
               spacing: 8.0,
               children: appointment.students.map((student) {
                 return new Chip(label: new Text(student.name));
@@ -130,7 +140,7 @@ class AppointmentDetailPage extends StatelessWidget {
         // Vehicles
         new ListTile(
           leading: new Icon(Icons.directions_car),
-          title: new Wrap(
+          title: appointment.students == null ? new Text('(geen voertuig)') : new Wrap(
               spacing: 8.0,
               children: appointment.students.map((student) {
                 return new Chip(label: new Text('Grijze Volvo'));
@@ -139,7 +149,7 @@ class AppointmentDetailPage extends StatelessWidget {
         // Remarks
         new ListTile(
             leading: new Icon(Icons.comment),
-            title: new Text(appointment.remark)),
+            title: new Text(appointment.remark ?? '')),
       ]),
     );
   }

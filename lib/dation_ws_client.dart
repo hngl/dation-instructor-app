@@ -119,8 +119,8 @@ class AgendaBlock extends AgendaEvent {
 class AgendaAppointment extends AgendaEvent {
   DateTime start;
   DateTime stop;
-  String itemType;
-  List<Student> students;
+  String itemType = '';
+  List<Student> students = new List();
   String remark = '';
 
   AgendaAppointment(
