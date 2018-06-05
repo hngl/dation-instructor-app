@@ -7,22 +7,23 @@ class SoapClient {
 
   SoapClient(this.endpoint);
 
-  Future<xml.XmlDocument> makeRequest({String action = '', String body = ''}) async {
+  Future<xml.XmlDocument> makeRequest(
+      {String action = '', String body = ''}) async {
     var requestBody = makeEnvelope(body).trim();
     print("SoapClient: starting request with body ${requestBody}");
 
-    http.Response response = await http.post(
-      endpoint,
-      headers: {
-        'Content-Type': 'text/xml; charset=UTF-8',
-        'SOAPAction': action,
-      },
-      body: requestBody
-    );
+    http.Response response = await http.post(endpoint,
+        headers: {
+          'Content-Type': 'text/xml; charset=UTF-8',
+          'SOAPAction': action,
+        },
+        body: requestBody);
 
     // Check for HTTP error
-    if(response.statusCode >= 400) {
-      throw new Exception("Server returned ${response.reasonPhrase} (${response.statusCode}): ${response.body}");
+    if (response.statusCode >= 400) {
+      throw new Exception(
+          "Server returned ${response.reasonPhrase} (${response.statusCode}): ${response.body}"
+      );
     }
 
     // Parse response to XML
@@ -30,8 +31,9 @@ class SoapClient {
 
     // Check for SoaPFault
     var faults = doc.findAllElements('SOAP-ENV:Fault');
-    if(faults.length > 0) {
-      throw new SoapFaultException(faults.first.findElements('faultstring').single.text);
+    if (faults.length > 0) {
+      throw new SoapFaultException(
+          faults.first.findElements('faultstring').single.text);
     }
 
     return doc;
