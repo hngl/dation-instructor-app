@@ -1,6 +1,7 @@
 import 'package:dation_app/agenda_page.dart';
 import 'package:dation_app/course_instances_page.dart';
 import 'package:dation_app/dation_ws_client.dart';
+import 'package:dation_app/login_page.dart';
 import 'package:dation_app/students_page.dart';
 import 'package:flutter/material.dart';
 
@@ -17,8 +18,13 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
         title: 'Dation',
         theme: new ThemeData(
-            primaryColor: Colors.purple, accentColor: Colors.blueAccent),
-        home: new HomePage());
+            primarySwatch: Colors.purple,
+            primaryColor: Colors.purple[800],
+            accentColor: Colors.lightBlue[300],
+            splashColor: Colors.redAccent,
+        ),
+        home: new LoginPage(), //new HomePage());
+    );
   }
 }
 
@@ -26,15 +32,15 @@ class MenuItem {
   String title;
   IconData icon;
 
-  MenuItem(this.title, this.icon);
+  MenuItem(this.title, {this.icon});
 }
 
 // Main layout and navigation
 class HomePage extends StatefulWidget {
   final drawerItems = [
-    new MenuItem('Agenda', Icons.calendar_today),
-    new MenuItem('Leerlingen', Icons.people),
-    new MenuItem('Cursussen', Icons.bubble_chart)
+    new MenuItem('Agenda', icon: Icons.calendar_today),
+    new MenuItem('Leerlingen', icon: Icons.people),
+    new MenuItem('Cursussen', icon: Icons.bubble_chart),
   ];
 
   @override
@@ -73,10 +79,10 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
-      var d = widget.drawerItems[i];
+      var item = widget.drawerItems[i];
       drawerOptions.add(new ListTile(
-        leading: new Icon(d.icon),
-        title: new Text(d.title),
+        leading: item.icon != null ? new Icon(item.icon) : new Text(''),
+        title: new Text(item.title),
         selected: i == _selectedDrawerIndex,
         onTap: () => _onSelectItem(i),
       ));
@@ -93,7 +99,7 @@ class HomePageState extends State<HomePage> {
           children: <Widget>[
             new UserAccountsDrawerHeader(
                 accountName: new Text("Beheerder"), accountEmail: null),
-            new Column(children: drawerOptions)
+            new Column(children: drawerOptions),
           ],
         ),
       ),
