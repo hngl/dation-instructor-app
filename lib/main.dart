@@ -113,9 +113,7 @@ class AgendaPage extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (!snapshot.hasData)
             // Shows progress indicator until the data is load.
-            return new Center(
-              child: new ThemedCircularProgressIndicator(),
-            );
+            return new PageLoadingIndicator('Afspraken ophalen...');
 
           List events = snapshot.data;
 
@@ -194,7 +192,6 @@ class AppointmentDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(appointment.itemType),
@@ -266,9 +263,8 @@ class CourseInstancesPage extends StatelessWidget {
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData)
               // Shows progress indicator until the data is load.
-              return new Center(
-                child: new ThemedCircularProgressIndicator(),
-              );
+              return new PageLoadingIndicator('Cursussen ophalen...');
+
             // Shows the real data with the data retrieved.
             List courseInstances = snapshot.data;
             return new ListView(
@@ -309,11 +305,21 @@ class CourseInstancesPage extends StatelessWidget {
   }
 }
 
-class ThemedCircularProgressIndicator extends StatelessWidget {
+class PageLoadingIndicator extends StatelessWidget {
+  final String _message;
+
+  PageLoadingIndicator(this._message);
+
   @override
   Widget build(BuildContext context) {
-    return new CircularProgressIndicator(
-        valueColor: new AlwaysStoppedAnimation(Theme.of(context).primaryColor));
+    return new Center(
+        child: new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      new CircularProgressIndicator(
+          valueColor:
+              new AlwaysStoppedAnimation(Theme.of(context).disabledColor)),
+      new Padding(padding: EdgeInsets.only(top: 12.0), child: new Text(_message, style: new TextStyle(color: Theme.of(context).disabledColor)))
+      ,
+    ]));
   }
 }
 
