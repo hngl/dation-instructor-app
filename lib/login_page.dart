@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 class LoginPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return new _LoginPageState();
+    return _LoginPageState();
   }
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final formKey = new GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
 
   String _username;
   String _password;
@@ -27,58 +27,55 @@ class _LoginPageState extends State<LoginPage> {
 
   void onAuthStateChanged() {
     Navigator.of(context).push(
-          new MaterialPageRoute(
-              builder: (BuildContext context) => new HomePage()),
+          MaterialPageRoute(builder: (BuildContext context) => HomePage()),
         );
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Theme(
-      data: new ThemeData(
-        canvasColor: Theme.of(context).primaryColor,
-        brightness: Brightness.dark,
-        accentColor: Theme.of(context).accentColor,
-        splashColor: Theme.of(context).splashColor,
-        buttonColor: Theme.of(context).accentColor
-      ),
-      child: new Scaffold(
-        body: new Center(
-          child: new Column(
+    return Theme(
+      data: ThemeData(
+          canvasColor: Theme.of(context).primaryColor,
+          brightness: Brightness.dark,
+          accentColor: Theme.of(context).accentColor,
+          splashColor: Theme.of(context).splashColor,
+          buttonColor: Theme.of(context).accentColor),
+      child: Scaffold(
+        body: Center(
+          child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              new Image.network(
+              Image.network(
                 'http://www.dation.nl/wp-content/uploads/2018/04/elephant_white-300x257.png',
               ),
-              new Form(
+              Form(
                 key: formKey,
-                child: new Padding(
+                child: Padding(
                   padding: EdgeInsets.all(30.0),
-                  child: new Column(
+                  child: Column(
                     children: <Widget>[
-                      new TextFormField(
+                      TextFormField(
                         initialValue: 'beheerder',
                         onSaved: (val) => _username = val,
                         decoration:
-                            new InputDecoration(labelText: "Gebruikersnaam"),
+                            InputDecoration(labelText: "Gebruikersnaam"),
                       ),
                       SizedBox(height: 24.0),
-                      new TextFormField(
+                      TextFormField(
                         initialValue: 'beheerder12',
                         obscureText: true,
                         onSaved: (val) => _password = val,
-                        decoration:
-                            new InputDecoration(labelText: "Wachtwoord"),
+                        decoration: InputDecoration(labelText: "Wachtwoord"),
                       ),
                       SizedBox(height: 48.0),
-                      new RaisedButton(
+                      RaisedButton(
                         onPressed: _submit,
-                        child: new Padding(
+                        child: Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: 18.0,
                             horizontal: 40.0,
                           ),
-                          child: new Text('Aanmelden'),
+                          child: Text('Aanmelden'),
                         ),
                       ),
                     ],

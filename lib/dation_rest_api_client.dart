@@ -13,7 +13,7 @@ Future<List<CourseInstance>> getCourseInstances() async {
       headers: {HttpHeaders.AUTHORIZATION: "Basic $basicKey"},
     );
     if (response.statusCode != HttpStatus.OK) {
-      throw new Exception(
+      throw Exception(
           "Failed http call: ${response.body} (${response.statusCode})");
     }
     // Decode the json response
@@ -31,9 +31,9 @@ Future<List<CourseInstance>> getCourseInstances() async {
 
 /// Method to parse information from the retrieved data
 List<CourseInstance> createCourseInstanceList(List data) {
-  List<CourseInstance> list = new List();
+  List<CourseInstance> list = List();
   for (int i = 0; i < data.length; i++) {
-    CourseInstance courseInstance = new CourseInstance(
+    CourseInstance courseInstance = CourseInstance(
       data[i]["name"],
       DateTime.parse(data[i]["startDate"]),
       ccvCode: data[i]["ccvCode"],

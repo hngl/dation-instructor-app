@@ -21,9 +21,8 @@ class SoapClient {
 
     // Check for HTTP error
     if (response.statusCode >= 400) {
-      throw new Exception(
-          "Server returned ${response.reasonPhrase} (${response.statusCode}): ${response.body}"
-      );
+      throw Exception("Server returned ${response.reasonPhrase} (${response
+              .statusCode}): ${response.body}");
     }
 
     // Parse response to XML
@@ -32,7 +31,7 @@ class SoapClient {
     // Check for SoaPFault
     var faults = doc.findAllElements('SOAP-ENV:Fault');
     if (faults.length > 0) {
-      throw new SoapFaultException(
+      throw SoapFaultException(
           faults.first.findElements('faultstring').single.text);
     }
 

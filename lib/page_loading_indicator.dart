@@ -7,15 +7,14 @@ class PageLoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Center(
-        child: new Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-      new CircularProgressIndicator(
-          valueColor:
-              new AlwaysStoppedAnimation(Theme.of(context).disabledColor)),
-      new Padding(
+    return Center(
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation(Theme.of(context).disabledColor)),
+      Padding(
           padding: EdgeInsets.only(top: 12.0),
-          child: new Text(_message,
-              style: new TextStyle(color: Theme.of(context).disabledColor))),
+          child: Text(_message,
+              style: TextStyle(color: Theme.of(context).disabledColor))),
     ]));
   }
 }

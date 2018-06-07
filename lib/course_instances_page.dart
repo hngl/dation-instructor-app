@@ -6,17 +6,17 @@ import 'package:intl/intl.dart';
 class CourseInstancesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new FutureBuilder(
+    return Scaffold(
+      body: FutureBuilder(
           future: getCourseInstances(),
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
             if (!snapshot.hasData)
               // Shows progress indicator until the data is load.
-              return new PageLoadingIndicator('Cursussen ophalen...');
+              return PageLoadingIndicator('Cursussen ophalen...');
 
             // Shows the real data with the data retrieved.
             List courseInstances = snapshot.data;
-            return new ListView(
+            return ListView(
               children:
                   createCourseInstanceSummaryWidgets(courseInstances, context),
             );
@@ -26,26 +26,26 @@ class CourseInstancesPage extends StatelessWidget {
 
   List<Widget> createCourseInstanceSummaryWidgets(
       List<CourseInstance> courseInstances, BuildContext context) {
-    List<Widget> widgetList = new List<Widget>();
+    List<Widget> widgetList = List<Widget>();
     if (courseInstances != null) {
       var lengthOfList = courseInstances.length;
-      var dateFormatter = new DateFormat('dd MMM y H:mm');
+      var dateFormatter = DateFormat('dd MMM y H:mm');
       for (int i = 0; i < lengthOfList; i++) {
         CourseInstance courseInstance = courseInstances[i];
-        var listItem = new ListTile(
-            leading: new Icon(
+        var listItem = ListTile(
+            leading: Icon(
                 courseInstance.remainingAttendeeCapacity > 0
                     ? Icons.event_available
                     : Icons.event_busy,
                 color: Theme.of(context).primaryColor),
-            title: new Text(courseInstance.name),
-            subtitle: new Text(dateFormatter.format(courseInstance.startDate)),
+            title: Text(courseInstance.name),
+            subtitle: Text(dateFormatter.format(courseInstance.startDate)),
             onTap: () {
               Navigator.push(
                   context,
-                  new MaterialPageRoute(
+                  MaterialPageRoute(
                       builder: (BuildContext context) =>
-                          new CourseInstanceDetailPage(courseInstance)));
+                          CourseInstanceDetailPage(courseInstance)));
             });
         widgetList.add(listItem);
       }
@@ -61,26 +61,24 @@ class CourseInstanceDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dateFormatter = new DateFormat('dd MMMM y H:mm');
+    var dateFormatter = DateFormat('dd MMMM y H:mm');
 
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(courseInstance.name),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(courseInstance.name),
       ),
-      body: new ListView(children: <Widget>[
-        new ListTile(
-          leading: new Icon(Icons.event),
-          title: new Text(dateFormatter.format(courseInstance.startDate)),
+      body: ListView(children: <Widget>[
+        ListTile(
+          leading: Icon(Icons.event),
+          title: Text(dateFormatter.format(courseInstance.startDate)),
         ),
-        new ListTile(
-            leading: new Icon(Icons.verified_user),
-            title: new Text("${courseInstance
+        ListTile(
+            leading: Icon(Icons.verified_user), title: Text("${courseInstance
                 .code95TheoryHours} uur theorie en ${courseInstance
-                .code95TheoryHours} uur praktijk"),
-            subtitle: new Text('Code 95')),
-        new ListTile(
-            leading: new Icon(Icons.event_seat),
-            title: new Text(courseInstance.remainingAttendeeCapacity > 0
+                .code95TheoryHours} uur praktijk"), subtitle: Text('Code 95')),
+        ListTile(
+            leading: Icon(Icons.event_seat),
+            title: Text(courseInstance.remainingAttendeeCapacity > 0
                 ? "${courseInstance.remainingAttendeeCapacity} plekken vrij"
                 : "volgeboekt")),
       ]),

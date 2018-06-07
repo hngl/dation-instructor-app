@@ -8,22 +8,22 @@ import 'package:flutter/material.dart';
 final String _wsHost = 'https://dashboard.dation.nl';
 
 void main() {
-  runApp(new MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-        title: 'Dation',
-        theme: new ThemeData(
-            primarySwatch: Colors.purple,
-            primaryColor: Colors.purple[800],
-            accentColor: Colors.lightBlue[300],
-            splashColor: Colors.redAccent,
-        ),
-        home: new LoginPage(), //new HomePage());
+    return MaterialApp(
+      title: 'Dation',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+        primaryColor: Colors.purple[800],
+        accentColor: Colors.lightBlue[300],
+        splashColor: Colors.redAccent,
+      ),
+      home: LoginPage(), //HomePage());
     );
   }
 }
@@ -38,14 +38,14 @@ class MenuItem {
 // Main layout and navigation
 class HomePage extends StatefulWidget {
   final drawerItems = [
-    new MenuItem('Agenda', icon: Icons.calendar_today),
-    new MenuItem('Leerlingen', icon: Icons.people),
-    new MenuItem('Cursussen', icon: Icons.bubble_chart),
+    MenuItem('Agenda', icon: Icons.calendar_today),
+    MenuItem('Leerlingen', icon: Icons.people),
+    MenuItem('Cursussen', icon: Icons.bubble_chart),
   ];
 
   @override
   State<StatefulWidget> createState() {
-    return new HomePageState();
+    return HomePageState();
   }
 }
 
@@ -55,18 +55,18 @@ class HomePageState extends State<HomePage> {
   _getDrawerItemWidget(int pos) {
     switch (pos) {
       case 0:
-        var client = new DationWsClient(_wsHost)
-          ..setTenant(new Tenant(873, 'dation'))
-          ..setUser(new User(1, 'beheerder'));
+        var client = DationWsClient(_wsHost)
+          ..setTenant(Tenant(873, 'dation'))
+          ..setUser(User(1, 'beheerder'));
 
-        return new AgendaPage(client);
+        return AgendaPage(client);
       case 1:
-        return new StudentsListPage();
+        return StudentsListPage();
       case 2:
-        return new CourseInstancesPage();
+        return CourseInstancesPage();
 
       default:
-        return new Text("Error");
+        return Text("Error");
     }
   }
 
@@ -80,26 +80,26 @@ class HomePageState extends State<HomePage> {
     var drawerOptions = <Widget>[];
     for (var i = 0; i < widget.drawerItems.length; i++) {
       var item = widget.drawerItems[i];
-      drawerOptions.add(new ListTile(
-        leading: item.icon != null ? new Icon(item.icon) : new Text(''),
-        title: new Text(item.title),
+      drawerOptions.add(ListTile(
+        leading: item.icon != null ? Icon(item.icon) : Text(''),
+        title: Text(item.title),
         selected: i == _selectedDrawerIndex,
         onTap: () => _onSelectItem(i),
       ));
     }
 
-    return new Scaffold(
-      appBar: new AppBar(
+    return Scaffold(
+      appBar: AppBar(
         // here we display the title corresponding to the fragment
         // you can instead choose to have a static title
-        title: new Text(widget.drawerItems[_selectedDrawerIndex].title),
+        title: Text(widget.drawerItems[_selectedDrawerIndex].title),
       ),
-      drawer: new Drawer(
-        child: new Column(
+      drawer: Drawer(
+        child: Column(
           children: <Widget>[
-            new UserAccountsDrawerHeader(
-                accountName: new Text("Beheerder"), accountEmail: null),
-            new Column(children: drawerOptions),
+            UserAccountsDrawerHeader(
+                accountName: Text("Beheerder"), accountEmail: null),
+            Column(children: drawerOptions),
           ],
         ),
       ),

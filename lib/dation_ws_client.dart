@@ -10,12 +10,12 @@ class DationWsClient {
   Tenant tenant;
 
   DationWsClient(this.host) {
-    agendaSoapClient = new SoapClient("$host//webservice/mobile/agenda.php");
+    agendaSoapClient = SoapClient("$host//webservice/mobile/agenda.php");
   }
 
   /// Parse string containing seconds since Unix Epoch into DateTime
   DateTime _unixToDateTime(String unix) {
-    return new DateTime.fromMillisecondsSinceEpoch(int.parse(unix) * 1000);
+    return DateTime.fromMillisecondsSinceEpoch(int.parse(unix) * 1000);
   }
 
   String _childText(xml.XmlElement element, String child) {
@@ -46,24 +46,24 @@ class DationWsClient {
     // Parse response
     var items =
         doc.findAllElements('AgendaBlokList').first.findElements('item');
-    List<AgendaEvent> events = new List();
+    List<AgendaEvent> events = List();
     for (xml.XmlElement eventNode in items) {
       AgendaEvent event;
       if (eventNode.findElements('type').first.text == 'blok') {
-        event = new AgendaBlock(
+        event = AgendaBlock(
           start: _unixToDateTime(_childText(eventNode, 'start')),
           stop: _unixToDateTime(_childText(eventNode, 'stop')),
         );
       } else {
         print("DationWsClient: Parsing xml for 'les'");
-        List<Student> students = new List();
+        List<Student> students = List();
         if (eventNode.findElements('studentsList').length > 0) {
           print("Element 'studentsList' found");
           for (var studentNode in eventNode
               .findElements('studentsList')
               .first
               .findElements('item')) {
-            students.add(new Student(
+            students.add(Student(
               int.parse(studentNode.findElements('id').first.text),
               studentNode.findElements('name').first.text,
             ));
@@ -71,7 +71,7 @@ class DationWsClient {
         }
 
         print('DationWsClient: Populating Appointment');
-        event = new AgendaAppointment(
+        event = AgendaAppointment(
             start: _unixToDateTime(_childText(eventNode, 'start')),
             stop: _unixToDateTime(_childText(eventNode, 'stop')),
             itemType: _childText(eventNode, 'itemtype'),
@@ -120,7 +120,7 @@ class AgendaAppointment extends AgendaEvent {
   DateTime start;
   DateTime stop;
   String itemType = '';
-  List<Student> students = new List();
+  List<Student> students = List();
   String remark = '';
 
   AgendaAppointment(

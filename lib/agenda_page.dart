@@ -10,36 +10,35 @@ class AgendaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new FutureBuilder(
+    return FutureBuilder(
         future: client.getAgendaBlocks(
-            instructor: new Instructor(1), date: new DateTime.now()),
+            instructor: Instructor(1), date: DateTime.now(),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (!snapshot.hasData)
             // Shows progress indicator until the data is load.
-            return new PageLoadingIndicator('Afspraken ophalen...');
+            return PageLoadingIndicator('Afspraken ophalen...');
 
           List events = snapshot.data;
 
-          return new Column(
+          return Column(
             children: <Widget>[
-              new Container(
+              Container(
                 padding: const EdgeInsets.all(14.0),
-                child: new Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    new IconButton(icon: new Icon(Icons.arrow_left)),
-                    new Text(
-                      new DateFormat('d MMMM y').format(DateTime.now()),
-                      style:
-                          new TextStyle(color: Theme.of(context).accentColor),
+                    IconButton(icon: Icon(Icons.arrow_left)),
+                    Text(
+                      DateFormat('d MMMM y').format(DateTime.now()),
+                      style: TextStyle(color: Theme.of(context).accentColor),
                     ),
-                    new IconButton(icon: new Icon(Icons.arrow_right)),
+                    IconButton(icon: Icon(Icons.arrow_right)),
                   ],
                 ),
               ),
-              new Expanded(
-                  child: new ListView(
-                      children: _buildEventSummaries(context, events)))
+              Expanded(
+                  child:
+                      ListView(children: _buildEventSummaries(context, events)))
             ],
           );
         });
@@ -47,53 +46,51 @@ class AgendaPage extends StatelessWidget {
 
   List<Widget> _buildEventSummaries(
       BuildContext context, List<AgendaEvent> events) {
-    List<Widget> widgetList = new List<Widget>();
+    List<Widget> widgetList = List<Widget>();
     if (events != null) {
-      var timeFormatter = new DateFormat('HH:mm');
+      var timeFormatter = DateFormat('HH:mm');
       for (var event in events) {
         var tile;
         print("Building widget for $event");
         if (event is AgendaAppointment) {
-          tile = new ListTile(
-              leading: new Column(children: <Widget>[
-                new Text(timeFormatter.format(event.start)),
-                new Text(timeFormatter.format(event.stop)),
+          tile = ListTile(
+              leading: Column(children: <Widget>[
+                Text(timeFormatter.format(event.start)),
+                Text(timeFormatter.format(event.stop)),
               ]),
-              title: new Wrap(
+              title: Wrap(
                   spacing: 8.0,
-                  children: new List.from([
-                    new Padding(
+                  children: List.from([
+                    Padding(
                         padding: const EdgeInsets.only(top: 6.0),
-                        child: new Text(event.itemType))
+                        child: Text(event.itemType))
                   ])
                     ..addAll(event.students.map((student) {
-                      return new Chip(label: new Text(student.name));
+                      return Chip(label: Text(student.name));
                     }))),
-              trailing:
-                  new Icon(Icons.edit, color: Theme.of(context).primaryColor),
+              trailing: Icon(Icons.edit, color: Theme.of(context).primaryColor),
               onTap: () {
                 Navigator.push(
                     context,
-                    new MaterialPageRoute(
+                    MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            new AppointmentDetailsPage(event)));
+                            AppointmentDetailsPage(event)));
               });
         }
         if (event is AgendaBlock) {
-          tile = new ListTile(
-              leading: new Column(children: <Widget>[
-                new Text(timeFormatter.format(event.start)),
-                new Text(timeFormatter.format(event.stop)),
+          tile = ListTile(
+              leading: Column(children: <Widget>[
+                Text(timeFormatter.format(event.start)),
+                Text(timeFormatter.format(event.stop)),
               ]),
-              title: new Text('(vrij blok)'),
-              trailing:
-                  new Icon(Icons.add, color: Theme.of(context).primaryColor),
+              title: Text('(vrij blok)'),
+              trailing: Icon(Icons.add, color: Theme.of(context).primaryColor),
               onTap: () {
                 Navigator.push(
                     context,
-                    new MaterialPageRoute(
+                    MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            new AppointmentDetailsPage(new AgendaAppointment(
+                            AppointmentDetailsPage(AgendaAppointment(
                                 start: event.start, stop: event.stop))));
               });
         }
@@ -116,55 +113,54 @@ class AppointmentDetailsPage extends StatelessWidget {
         "Building AppointmentDetailsPage for $appointment {students: ${appointment
             .students}, remark: ${appointment.remark}}");
 
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(appointment.itemType ?? 'Nieuwe afspraak'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appointment.itemType ?? 'Nieuwe afspraak'),
       ),
-      body: new ListView(children: <Widget>[
+      body: ListView(children: <Widget>[
         // Item Type
-        new ListTile(
-          leading: new Icon(Icons.label),
-          title: new Text(appointment.itemType ?? '(onbekend)'),
+        ListTile(
+          leading: Icon(Icons.label),
+          title: Text(appointment.itemType ?? '(onbekend)'),
         ),
         // Date
-        new ListTile(
-          leading: new Icon(Icons.event),
-          title:
-              new Text(new DateFormat('dd MMMM y').format(appointment.start)),
+        ListTile(
+          leading: Icon(Icons.event),
+          title: Text(DateFormat('dd MMMM y').format(appointment.start)),
         ),
         // Start time
-        new ListTile(
-          leading: new Icon(Icons.timelapse),
-          title: new Text(new DateFormat('HH:MM').format(appointment.start) +
+        ListTile(
+          leading: Icon(Icons.timelapse),
+          title: Text(DateFormat('HH:MM').format(appointment.start) +
               ' - ' +
-              new DateFormat('HH:MM').format(appointment.stop)),
+              DateFormat('HH:MM').format(appointment.stop)),
         ),
         // Students
-        new ListTile(
-          leading: new Icon(Icons.people),
+        ListTile(
+          leading: Icon(Icons.people),
           title: appointment.students == null
-              ? new Text('(geen leerlingen)')
-              : new Wrap(
+              ? Text('(geen leerlingen)')
+              : Wrap(
                   spacing: 8.0,
                   children: appointment.students.map((student) {
-                    return new Chip(label: new Text(student.name));
+                    return Chip(label: Text(student.name));
                   }).toList()),
         ),
         // Vehicles
-        new ListTile(
-          leading: new Icon(Icons.directions_car),
+        ListTile(
+          leading: Icon(Icons.directions_car),
           title: appointment.students == null
-              ? new Text('(geen voertuig)')
-              : new Wrap(
+              ? Text('(geen voertuig)')
+              : Wrap(
                   spacing: 8.0,
                   children: appointment.students.map((student) {
-                    return new Chip(label: new Text('Grijze Volvo'));
+                    return Chip(label: Text('Grijze Volvo'));
                   }).toList()),
         ),
         // Remarks
-        new ListTile(
-            leading: new Icon(Icons.comment),
-            title: new Text(appointment.remark ?? '')),
+        ListTile(
+            leading: Icon(Icons.comment),
+            title: Text(appointment.remark ?? '')),
       ]),
     );
   }
