@@ -23,11 +23,20 @@ class AgendaPage extends StatelessWidget {
           return new Column(
             children: <Widget>[
               new Container(
-                  padding: const EdgeInsets.all(14.0),
-                  child: new Text(
-                    new DateFormat('dd MMMM y').format(DateTime.now()),
-                    style: new TextStyle(color: Theme.of(context).accentColor),
-                  )),
+                padding: const EdgeInsets.all(14.0),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    new IconButton(icon: new Icon(Icons.arrow_left)),
+                    new Text(
+                      new DateFormat('d MMMM y').format(DateTime.now()),
+                      style:
+                          new TextStyle(color: Theme.of(context).accentColor),
+                    ),
+                    new IconButton(icon: new Icon(Icons.arrow_right)),
+                  ],
+                ),
+              ),
               new Expanded(
                   child: new ListView(
                       children: _buildEventSummaries(context, events)))
@@ -61,7 +70,7 @@ class AgendaPage extends StatelessWidget {
                       return new Chip(label: new Text(student.name));
                     }))),
               trailing:
-              new Icon(Icons.edit, color: Theme.of(context).primaryColor),
+                  new Icon(Icons.edit, color: Theme.of(context).primaryColor),
               onTap: () {
                 Navigator.push(
                     context,
@@ -72,21 +81,21 @@ class AgendaPage extends StatelessWidget {
         }
         if (event is AgendaBlock) {
           tile = new ListTile(
-            leading: new Column(children: <Widget>[
-              new Text(timeFormatter.format(event.start)),
-              new Text(timeFormatter.format(event.stop)),
-            ]),
-            title: new Text('(vrij blok)'),
-            trailing:
-            new Icon(Icons.add, color: Theme.of(context).primaryColor),
+              leading: new Column(children: <Widget>[
+                new Text(timeFormatter.format(event.start)),
+                new Text(timeFormatter.format(event.stop)),
+              ]),
+              title: new Text('(vrij blok)'),
+              trailing:
+                  new Icon(Icons.add, color: Theme.of(context).primaryColor),
               onTap: () {
                 Navigator.push(
                     context,
                     new MaterialPageRoute(
                         builder: (BuildContext context) =>
-                        new AppointmentDetailsPage(new AgendaAppointment(start:event.start, stop:event.stop))));
-              }
-          );
+                            new AppointmentDetailsPage(new AgendaAppointment(
+                                start: event.start, stop: event.stop))));
+              });
         }
 
         widgetList.add(tile);
@@ -103,7 +112,9 @@ class AppointmentDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("Building AppointmentDetailsPage for $appointment {students: ${appointment.students}, remark: ${appointment.remark}}");
+    debugPrint(
+        "Building AppointmentDetailsPage for $appointment {students: ${appointment
+            .students}, remark: ${appointment.remark}}");
 
     return new Scaffold(
       appBar: new AppBar(
@@ -131,20 +142,24 @@ class AppointmentDetailsPage extends StatelessWidget {
         // Students
         new ListTile(
           leading: new Icon(Icons.people),
-          title: appointment.students == null ? new Text('(geen leerlingen)') : new Wrap(
-              spacing: 8.0,
-              children: appointment.students.map((student) {
-                return new Chip(label: new Text(student.name));
-              }).toList()),
+          title: appointment.students == null
+              ? new Text('(geen leerlingen)')
+              : new Wrap(
+                  spacing: 8.0,
+                  children: appointment.students.map((student) {
+                    return new Chip(label: new Text(student.name));
+                  }).toList()),
         ),
         // Vehicles
         new ListTile(
           leading: new Icon(Icons.directions_car),
-          title: appointment.students == null ? new Text('(geen voertuig)') : new Wrap(
-              spacing: 8.0,
-              children: appointment.students.map((student) {
-                return new Chip(label: new Text('Grijze Volvo'));
-              }).toList()),
+          title: appointment.students == null
+              ? new Text('(geen voertuig)')
+              : new Wrap(
+                  spacing: 8.0,
+                  children: appointment.students.map((student) {
+                    return new Chip(label: new Text('Grijze Volvo'));
+                  }).toList()),
         ),
         // Remarks
         new ListTile(
