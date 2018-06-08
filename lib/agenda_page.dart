@@ -222,10 +222,10 @@ class AppointmentDetailsPage extends StatelessWidget {
             icon: Icon(Icons.delete_forever),
             onPressed: () {
               _client.deleteAppointment(appointment).then((value) {
-                debugPrint("Deletion successed!");
+                debugPrint("Deleted succesfully $appointment");
                 Navigator.of(context).pop();
               }).catchError((error) {
-                print("Deletion failed: $error");
+                print("Failed deleting $appointment: $error");
               });
             },
           ),
@@ -408,7 +408,9 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
                 padding: EdgeInsets.all(16.0),
                 child: new Text('Opslaan'),
                 onPressed: () {
-                  _client.saveAppointment(appointment).catchError((error) {
+                  _client.saveAppointment(appointment, 17).then((v) {
+                    Navigator.of(context).pop();
+                  }).catchError((error) {
                     debugPrint(
                       "Error while saving Appointment: ${error.toString()}",
                     );

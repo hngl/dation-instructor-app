@@ -102,15 +102,15 @@ class DationWsClient {
     this.tenant = tenant;
   }
 
-  Future<Null> saveAppointment(Appointment appointment) async {
-    var response = await agendaSoapClient
-        .makeRequest(body: '''<agenda_request_agendaitem_store>
+  Future<Null> saveAppointment(Appointment appointment, int typeId) async {
+    var response = await agendaSoapClient.makeRequest(
+      body: '''<agenda_request_agendaitem_store>
 			<request xsi:type="ns2:agendaitem_store_Request">
 				<id xsi:type="xsd:int">${appointment.id}</id>
 				<start xsi:type="xsd:int">${_dateTimeToUnix(appointment.start)}</start>
-				<instructeur xsi:type="xsd:int">1</instructeur>
+				<instructeur xsi:type="xsd:int">${user.id}</instructeur>
 				<stop xsi:type="xsd:int">${_dateTimeToUnix(appointment.end)}</stop>
-				<type xsi:type="xsd:int">1</type>
+				<type xsi:type="xsd:int">$typeId</type>
 				<opmerkingen xsi:type="xsd:string"></opmerkingen>
 				<showToStudent xsi:type="xsd:int">0</showToStudent>
 				<uitslag xsi:type="xsd:int">0</uitslag>
@@ -125,7 +125,8 @@ class DationWsClient {
 				<SessionID xsi:nil="true"/>
 				<ipaddress xsi:type="xsd:string">127.0.0.1</ipaddress>
 			</request>
-		</agenda_request_agendaitem_store>''');
+		</agenda_request_agendaitem_store>''',
+    );
 
     _checkForBadResult(response);
 
@@ -145,8 +146,9 @@ class DationWsClient {
   }
 
   Future<dynamic> deleteAppointment(Appointment appointment) {
-    debugPrint("Deleting from server ${appointment}");
-    return agendaSoapClient.makeRequest(body: '''<agenda_request_get_delete_agenda_item>
+    debugPrint("Deleting from server $appointment");
+    return agendaSoapClient.makeRequest(
+      body: '''<agenda_request_get_delete_agenda_item>
 			<request xsi:type="ns2:Delete_Agenda_Item_Request">
 				<item xsi:type="xsd:int">${appointment.id}</item>
 				<type xsi:type="xsd:string">item</type>
@@ -155,8 +157,9 @@ class DationWsClient {
 				<UserName xsi:type="xsd:string">${user.name}</UserName>
 				<Handle xsi:type="xsd:string">${tenant.handle}</Handle>
 				<SessionID xsi:nil="true"/>
-				<ipaddress xsi:type="xsd:string">178.170.155.84</ipaddress>
+				<ipaddress xsi:type="xsd:string">127.0.0.1</ipaddress>
 			</request>
-		</agenda_request_get_delete_agenda_item>''');
+		</agenda_request_get_delete_agenda_item>''',
+    );
   }
 }
