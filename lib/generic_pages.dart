@@ -35,7 +35,11 @@ class PageLoadingError extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(Icons.error),
+          Icon(
+            Icons.error_outline,
+            size: 52.0,
+            color: Theme.of(context).disabledColor,
+          ),
           Padding(
               padding: EdgeInsets.only(top: 12.0),
               child: Text(_message,

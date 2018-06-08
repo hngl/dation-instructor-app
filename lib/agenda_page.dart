@@ -29,6 +29,11 @@ class _AgendaPageState extends State<AgendaPage> {
           date: _date,
         ),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+          if(snapshot.hasError) {
+            print(snapshot.error);
+            return PageLoadingError('Fout bij het ophalen van afspraken.');
+          }
+
           if (!snapshot.hasData)
             // Shows progress indicator until the data is load.
             return PageLoadingIndicator('Afspraken ophalen...');
