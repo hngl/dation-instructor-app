@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:xml/xml.dart' as xml;
-
+import 'package:flutter/foundation.dart';
 import 'soap_client.dart';
 
 class DationWsClient {
@@ -26,7 +26,7 @@ class DationWsClient {
       {Instructor instructor, DateTime date}) async {
     int requestedTimeStamp = (date.millisecondsSinceEpoch / 1000).floor();
 
-    print(
+    debugPrint(
         "DationWsClient: Fetching agenda blocks with stamp $requestedTimeStamp");
 
     // Make request
@@ -55,10 +55,10 @@ class DationWsClient {
           end: _unixToDateTime(_childText(eventNode, 'stop')),
         );
       } else {
-        print("DationWsClient: Parsing xml for 'les'");
+        debugPrint("DationWsClient: Parsing xml for 'les'");
         List<Student> students = List();
         if (eventNode.findElements('studentsList').length > 0) {
-          print("Element 'studentsList' found");
+          debugPrint("Element 'studentsList' found");
           for (var studentNode in eventNode
               .findElements('studentsList')
               .first
@@ -70,14 +70,16 @@ class DationWsClient {
           }
         }
 
-        print('DationWsClient: Populating Appointment');
+        debugPrint('DationWsClient: Populating Appointment');
+        debugPrint(eventNode.toXmlString(pretty: true));
         event = Appointment(
-            start: _unixToDateTime(_childText(eventNode, 'start')),
-            end: _unixToDateTime(_childText(eventNode, 'stop')),
-            itemType: _childText(eventNode, 'itemtype'),
-            remark: _childText(eventNode, 'opmerkingen'),
-            students: students);
-        print('DationWsClient: Appointment populated');
+          start: _unixToDateTime(_childText(eventNode, 'start')),
+          end: _unixToDateTime(_childText(eventNode, 'stop')),
+          itemType: _childText(eventNode, 'itemtype'),
+          students: students,
+        );
+
+        debugPrint('DationWsClient: Appointment populated');
       }
 
       events.add(event);

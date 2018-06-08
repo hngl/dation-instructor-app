@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
+import 'package:flutter/foundation.dart';
 
 class SoapClient {
   String endpoint;
@@ -10,7 +11,7 @@ class SoapClient {
   Future<xml.XmlDocument> makeRequest(
       {String action = '', String body = ''}) async {
     var requestBody = makeEnvelope(body).trim();
-    print("SoapClient: starting request with body $requestBody");
+    debugPrint("SoapClient: starting request with body $requestBody");
 
     http.Response response = await http.post(endpoint,
         headers: {

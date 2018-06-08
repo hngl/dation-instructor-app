@@ -77,7 +77,6 @@ class _AgendaPageState extends State<AgendaPage> {
       var timeFormatter = DateFormat('HH:mm');
       for (var event in events) {
         var tile;
-        print("Building widget for $event");
         if (event is Appointment) {
           tile = ListTile(
               leading: Column(children: <Widget>[
@@ -269,7 +268,7 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
           appointment.end.minute,
         );
       });
-      print("Date selected: ${appointment.start}");
+      debugPrint("Date selected: ${appointment.start}");
     }
   }
 
@@ -298,7 +297,7 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
           appointment.end.minute + diffMinutes,
         );
       });
-      print("Date selected: ${appointment.start}");
+      debugPrint("Date selected: ${appointment.start}");
     }
   }
 
@@ -318,12 +317,12 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
           picked.minute,
         );
       });
-      print("Date selected: ${appointment.start}");
+      debugPrint("Date selected: ${appointment.start}");
     }
   }
 
   void _removeStudent(Student student) {
-    print("Removed student $student");
+    debugPrint("Removed student $student");
     // TODO
   }
 

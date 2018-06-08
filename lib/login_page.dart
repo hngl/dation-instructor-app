@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
       form.save();
     }
 
-    print("Submitted $_username@$_handle:$_password");
+    debugPrint("Submitted $_username@$_handle:$_password");
     onAuthStateChanged();
   }
 
