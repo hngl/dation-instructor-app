@@ -5,17 +5,28 @@ import 'package:dation_app/generic_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class AgendaPage extends StatelessWidget {
+class AgendaPage extends StatefulWidget {
   final DationWsClient client;
 
   AgendaPage(this.client);
 
   @override
+  _AgendaPageState createState() {
+    return new _AgendaPageState(DateTime.now());
+  }
+}
+
+class _AgendaPageState extends State<AgendaPage> {
+  DateTime _date;
+
+  _AgendaPageState(this._date);
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: client.getAgendaBlocks(
+        future: widget.client.getAgendaBlocks(
           instructor: Instructor(1),
-          date: DateTime.now(),
+          date: _date,
         ),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (!snapshot.hasData)
@@ -31,12 +42,18 @@ class AgendaPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    IconButton(icon: Icon(Icons.arrow_left), onPressed: null),
+                    IconButton(
+                      icon: Icon(Icons.arrow_left),
+                      onPressed: _prevDay,
+                    ),
                     Text(
-                      DateFormat('d MMMM y').format(DateTime.now()),
+                      DateFormat('d MMMM y').format(_date),
                       style: TextStyle(color: Theme.of(context).accentColor),
                     ),
-                    IconButton(icon: Icon(Icons.arrow_right), onPressed: null),
+                    IconButton(
+                      icon: Icon(Icons.arrow_right),
+                      onPressed: _nextDay,
+                    ),
                   ],
                 ),
               ),
@@ -107,6 +124,20 @@ class AgendaPage extends StatelessWidget {
       }
     }
     return widgetList;
+  }
+
+  /// Flip to previous day
+  void _prevDay() {
+    setState(() {
+      _date = _date.subtract(Duration(days: 1));
+    });
+  }
+
+  /// Flip to next day
+  void _nextDay() {
+    setState(() {
+      _date = _date.add(Duration(days: 1));
+    });
   }
 }
 
@@ -375,7 +406,10 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
             ),
             new Padding(
               padding: const EdgeInsets.all(8.0),
-              child: RaisedButton(child: new Text('Opslaan'), onPressed: null,),
+              child: RaisedButton(
+                child: new Text('Opslaan'),
+                onPressed: null,
+              ),
             ),
           ],
         ),
