@@ -5,10 +5,12 @@ import 'package:dation_app/generic_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class AgendaPage extends StatefulWidget {
-  final DationWsClient client;
+DationWsClient _client;
 
-  AgendaPage(this.client);
+class AgendaPage extends StatefulWidget {
+  AgendaPage(DationWsClient client) {
+    _client = client;
+  }
 
   @override
   _AgendaPageState createState() {
@@ -24,7 +26,7 @@ class _AgendaPageState extends State<AgendaPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: widget.client.getAgendaBlocks(
+        future: _client.getAgendaBlocks(
           instructor: Instructor(1),
           date: _date,
         ),
@@ -177,24 +179,12 @@ class AppointmentDetailsPage extends StatelessWidget {
       // Students
       ListTile(
         leading: Icon(Icons.people),
-        title: appointment.students == null
+        title: (appointment.students == null ?? appointment.students.isEmpty)
             ? Text('(geen leerlingen)')
             : Wrap(
                 spacing: 8.0,
                 children: appointment.students.map((student) {
                   return Chip(label: Text(student.name));
-                }).toList()),
-      ),
-      // Vehicles
-      ListTile(
-        leading: Icon(Icons.directions_car),
-        title: appointment.students == null
-            ? Text('(geen voertuig)')
-            : Wrap(
-                spacing: 8.0,
-                children: appointment.students.map((student) {
-                  // TODO Replace with actual vehicles
-                  return Chip(label: Text('Grijze Volvo'));
                 }).toList()),
       ),
     ];
@@ -327,12 +317,10 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
   }
 
   void _removeStudent(Student student) {
-    debugPrint("Removed student $student");
-    // TODO
-  }
-
-  void _removeVehicle(var vehicle) {
-    // TODO
+    setState(() {
+      appointment.students.remove(student);
+      debugPrint("Removed student $student from appointment $appointment");
+    });
   }
 
   @override
@@ -377,33 +365,18 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
             // Students
             ListTile(
               leading: Icon(Icons.people),
-              title: appointment.students == null
-                  ? Text('(geen leerlingen)')
-                  : Wrap(
-                      spacing: 8.0,
-                      runSpacing: 6.0,
-                      children: appointment.students.map((student) {
-                        return Chip(
-                          label: Text(student.name),
-                          onDeleted: () => _removeStudent(student),
-                        );
-                      }).toList()),
-              trailing: Icon(Icons.add),
-            ),
-            // Vehicles
-            ListTile(
-              leading: Icon(Icons.directions_car),
-              title: appointment.students == null
-                  ? Text('(geen voertuig)')
-                  : Wrap(
-                      spacing: 8.0,
-                      runSpacing: 6.0,
-                      children: appointment.students.map((vehicle) {
-                        return Chip(
-                          label: Text('Grijze Volvo'),
-                          onDeleted: () => _removeVehicle(vehicle),
-                        );
-                      }).toList()),
+              title:
+                  (appointment.students == null ?? appointment.students.isEmpty)
+                      ? Text('(geen leerlingen)')
+                      : Wrap(
+                          spacing: 8.0,
+                          runSpacing: 6.0,
+                          children: appointment.students.map((student) {
+                            return Chip(
+                              label: Text(student.name),
+                              onDeleted: () => _removeStudent(student),
+                            );
+                          }).toList()),
               trailing: Icon(Icons.add),
             ),
             // Remarks
@@ -416,8 +389,15 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
             new Padding(
               padding: const EdgeInsets.all(8.0),
               child: RaisedButton(
+                padding: EdgeInsets.all(16.0),
                 child: new Text('Opslaan'),
-                onPressed: null,
+                onPressed: () {
+                  _client.saveAppointment(appointment).catchError((error) {
+                    debugPrint(
+                      "Error while saving Appointment: ${error.toString()}",
+                    );
+                  });
+                },
               ),
             ),
           ],

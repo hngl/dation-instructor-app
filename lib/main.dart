@@ -20,8 +20,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         primaryColor: Colors.purple[800],
-        accentColor: Colors.lightBlue[300],
+        accentColor: Colors.lightBlue[200],
         splashColor: Colors.redAccent,
+        buttonColor: Colors.lightBlue[200],
       ),
       home: LoginPage(), //HomePage());
     );

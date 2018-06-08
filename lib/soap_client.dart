@@ -62,3 +62,14 @@ class SoapFaultException implements Exception {
     return "SoapFault: $faultString";
   }
 }
+
+/// Thrown when response message contains a Response element with a StatusResult element of value false
+class FalseStatusResultException implements Exception {
+  String message;
+
+  FalseStatusResultException(this.message);
+
+  String toString() {
+    return "StatusResult is false: $message";
+  }
+}
