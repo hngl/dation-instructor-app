@@ -12,7 +12,9 @@ class AgendaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: client.getAgendaBlocks(
-            instructor: Instructor(1), date: DateTime.now(),
+          instructor: Instructor(1),
+          date: DateTime.now(),
+        ),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (!snapshot.hasData)
             // Shows progress indicator until the data is load.
@@ -27,12 +29,12 @@ class AgendaPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    IconButton(icon: Icon(Icons.arrow_left)),
+                    IconButton(icon: Icon(Icons.arrow_left), onPressed: null),
                     Text(
                       DateFormat('d MMMM y').format(DateTime.now()),
                       style: TextStyle(color: Theme.of(context).accentColor),
                     ),
-                    IconButton(icon: Icon(Icons.arrow_right)),
+                    IconButton(icon: Icon(Icons.arrow_right), onPressed: null),
                   ],
                 ),
               ),
@@ -52,7 +54,7 @@ class AgendaPage extends StatelessWidget {
       for (var event in events) {
         var tile;
         print("Building widget for $event");
-        if (event is AgendaAppointment) {
+        if (event is Appointment) {
           tile = ListTile(
               leading: Column(children: <Widget>[
                 Text(timeFormatter.format(event.start)),
@@ -60,6 +62,7 @@ class AgendaPage extends StatelessWidget {
               ]),
               title: Wrap(
                   spacing: 8.0,
+                  runSpacing: 6.0,
                   children: List.from([
                     Padding(
                         padding: const EdgeInsets.only(top: 6.0),
@@ -87,11 +90,13 @@ class AgendaPage extends StatelessWidget {
               trailing: Icon(Icons.add, color: Theme.of(context).primaryColor),
               onTap: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            AppointmentDetailsPage(AgendaAppointment(
-                                start: event.start, stop: event.stop))));
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => AppointmentEditPage(
+                          Appointment(start: event.start, stop: event.stop),
+                        ),
+                  ),
+                );
               });
         }
 
@@ -103,7 +108,7 @@ class AgendaPage extends StatelessWidget {
 }
 
 class AppointmentDetailsPage extends StatelessWidget {
-  final AgendaAppointment appointment;
+  final Appointment appointment;
 
   AppointmentDetailsPage(this.appointment);
 
@@ -115,53 +120,135 @@ class AppointmentDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(appointment.itemType ?? 'Nieuwe afspraak'),
+        title: Text('Afspraak'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      AppointmentEditPage(appointment),
+                ),
+              );
+            },
+          )
+        ],
       ),
-      body: ListView(children: <Widget>[
-        // Item Type
-        ListTile(
-          leading: Icon(Icons.label),
-          title: Text(appointment.itemType ?? '(onbekend)'),
+      body: ListView(
+        children: <Widget>[
+          // Item Type
+          ListTile(
+            leading: Icon(Icons.label),
+            title: Text(appointment.itemType ?? '(onbekend)'),
+          ),
+          // Date
+          ListTile(
+            leading: Icon(Icons.event),
+            title: Text(DateFormat('dd MMMM y').format(appointment.start)),
+          ),
+          // Start time
+          ListTile(
+            leading: Icon(Icons.timelapse),
+            title: Text(DateFormat('HH:MM').format(appointment.start) +
+                ' - ' +
+                DateFormat('HH:MM').format(appointment.stop)),
+          ),
+          // Students
+          ListTile(
+            leading: Icon(Icons.people),
+            title: appointment.students == null
+                ? Text('(geen leerlingen)')
+                : Wrap(
+                    spacing: 8.0,
+                    children: appointment.students.map((student) {
+                      return Chip(label: Text(student.name));
+                    }).toList()),
+          ),
+          // Vehicles
+          ListTile(
+            leading: Icon(Icons.directions_car),
+            title: appointment.students == null
+                ? Text('(geen voertuig)')
+                : Wrap(
+                    spacing: 8.0,
+                    children: appointment.students.map((student) {
+                      return Chip(label: Text('Grijze Volvo'));
+                    }).toList()),
+          ),
+          // Remarks
+          ListTile(
+              leading: Icon(Icons.comment),
+              title: Text(appointment.remark ?? '')),
+        ],
+      ),
+    );
+  }
+
+  void _onEdit() {}
+}
+
+class AppointmentEditPage extends StatelessWidget {
+  final Appointment appointment;
+
+  AppointmentEditPage(this.appointment);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: new Text('Nieuwe afspraak'),
+      ),
+      body: Center(
+        child: ListView(
+          children: <Widget>[
+            // Item Type
+            ListTile(
+              leading: Icon(Icons.label),
+              title: Text(appointment.itemType ?? '(onbekend)'),
+            ),
+            // Date
+            ListTile(
+              leading: Icon(Icons.event),
+              title: Text(DateFormat('dd MMMM y').format(appointment.start)),
+            ),
+            // Start time
+            ListTile(
+              leading: Icon(Icons.timelapse),
+              title: Text(DateFormat('HH:MM').format(appointment.start) +
+                  ' - ' +
+                  DateFormat('HH:MM').format(appointment.stop)),
+            ),
+            // Students
+            ListTile(
+              leading: Icon(Icons.people),
+              title: appointment.students == null
+                  ? Text('(geen leerlingen)')
+                  : Wrap(
+                      spacing: 8.0,
+                      children: appointment.students.map((student) {
+                        return Chip(label: Text(student.name));
+                      }).toList()),
+            ),
+            // Vehicles
+            ListTile(
+              leading: Icon(Icons.directions_car),
+              title: appointment.students == null
+                  ? Text('(geen voertuig)')
+                  : Wrap(
+                      spacing: 8.0,
+                      children: appointment.students.map((student) {
+                        return Chip(label: Text('Grijze Volvo'));
+                      }).toList()),
+            ),
+            // Remarks
+            ListTile(
+                leading: Icon(Icons.comment),
+                title: Text(appointment.remark ?? '')),
+          ],
         ),
-        // Date
-        ListTile(
-          leading: Icon(Icons.event),
-          title: Text(DateFormat('dd MMMM y').format(appointment.start)),
-        ),
-        // Start time
-        ListTile(
-          leading: Icon(Icons.timelapse),
-          title: Text(DateFormat('HH:MM').format(appointment.start) +
-              ' - ' +
-              DateFormat('HH:MM').format(appointment.stop)),
-        ),
-        // Students
-        ListTile(
-          leading: Icon(Icons.people),
-          title: appointment.students == null
-              ? Text('(geen leerlingen)')
-              : Wrap(
-                  spacing: 8.0,
-                  children: appointment.students.map((student) {
-                    return Chip(label: Text(student.name));
-                  }).toList()),
-        ),
-        // Vehicles
-        ListTile(
-          leading: Icon(Icons.directions_car),
-          title: appointment.students == null
-              ? Text('(geen voertuig)')
-              : Wrap(
-                  spacing: 8.0,
-                  children: appointment.students.map((student) {
-                    return Chip(label: Text('Grijze Volvo'));
-                  }).toList()),
-        ),
-        // Remarks
-        ListTile(
-            leading: Icon(Icons.comment),
-            title: Text(appointment.remark ?? '')),
-      ]),
+      ),
     );
   }
 }

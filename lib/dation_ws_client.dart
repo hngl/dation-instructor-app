@@ -71,7 +71,7 @@ class DationWsClient {
         }
 
         print('DationWsClient: Populating Appointment');
-        event = AgendaAppointment(
+        event = Appointment(
             start: _unixToDateTime(_childText(eventNode, 'start')),
             stop: _unixToDateTime(_childText(eventNode, 'stop')),
             itemType: _childText(eventNode, 'itemtype'),
@@ -116,14 +116,14 @@ class AgendaBlock extends AgendaEvent {
   }
 }
 
-class AgendaAppointment extends AgendaEvent {
+class Appointment extends AgendaEvent {
   DateTime start;
   DateTime stop;
   String itemType = '';
   List<Student> students = List();
   String remark = '';
 
-  AgendaAppointment(
+  Appointment(
       {this.start, this.stop, this.itemType, this.students, this.remark});
 
   @override
