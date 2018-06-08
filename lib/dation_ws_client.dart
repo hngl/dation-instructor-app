@@ -52,7 +52,7 @@ class DationWsClient {
       if (eventNode.findElements('type').first.text == 'blok') {
         event = AgendaBlock(
           start: _unixToDateTime(_childText(eventNode, 'start')),
-          stop: _unixToDateTime(_childText(eventNode, 'stop')),
+          end: _unixToDateTime(_childText(eventNode, 'stop')),
         );
       } else {
         print("DationWsClient: Parsing xml for 'les'");
@@ -73,7 +73,7 @@ class DationWsClient {
         print('DationWsClient: Populating Appointment');
         event = Appointment(
             start: _unixToDateTime(_childText(eventNode, 'start')),
-            stop: _unixToDateTime(_childText(eventNode, 'stop')),
+            end: _unixToDateTime(_childText(eventNode, 'stop')),
             itemType: _childText(eventNode, 'itemtype'),
             remark: _childText(eventNode, 'opmerkingen'),
             students: students);
@@ -106,29 +106,29 @@ class AgendaEvent {}
 
 class AgendaBlock extends AgendaEvent {
   DateTime start;
-  DateTime stop;
+  DateTime end;
 
-  AgendaBlock({this.start, this.stop});
+  AgendaBlock({this.start, this.end});
 
   @override
   String toString() {
-    return "${super.toString()} ($start - $stop)";
+    return "${super.toString()} ($start - $end)";
   }
 }
 
 class Appointment extends AgendaEvent {
   DateTime start;
-  DateTime stop;
+  DateTime end;
   String itemType = '';
   List<Student> students = List();
   String remark = '';
 
   Appointment(
-      {this.start, this.stop, this.itemType, this.students, this.remark});
+      {this.start, this.end, this.itemType, this.students, this.remark});
 
   @override
   String toString() {
-    return "${super.toString()} ($itemType, $start - $stop)";
+    return "${super.toString()} ($itemType, $start - $end)";
   }
 }
 

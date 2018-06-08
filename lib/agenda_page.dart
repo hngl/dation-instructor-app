@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dation_app/dation_ws_client.dart';
 import 'package:dation_app/page_loading_indicator.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +60,7 @@ class AgendaPage extends StatelessWidget {
           tile = ListTile(
               leading: Column(children: <Widget>[
                 Text(timeFormatter.format(event.start)),
-                Text(timeFormatter.format(event.stop)),
+                Text(timeFormatter.format(event.end)),
               ]),
               title: Wrap(
                   spacing: 8.0,
@@ -71,7 +73,8 @@ class AgendaPage extends StatelessWidget {
                     ..addAll(event.students.map((student) {
                       return Chip(label: Text(student.name));
                     }))),
-              trailing: Icon(Icons.edit, color: Theme.of(context).primaryColor),
+              trailing:
+                  Icon(Icons.more_horiz, color: Theme.of(context).primaryColor),
               onTap: () {
                 Navigator.push(
                     context,
@@ -84,7 +87,7 @@ class AgendaPage extends StatelessWidget {
           tile = ListTile(
               leading: Column(children: <Widget>[
                 Text(timeFormatter.format(event.start)),
-                Text(timeFormatter.format(event.stop)),
+                Text(timeFormatter.format(event.end)),
               ]),
               title: Text('(vrij blok)'),
               trailing: Icon(Icons.add, color: Theme.of(context).primaryColor),
@@ -93,7 +96,7 @@ class AgendaPage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) => AppointmentEditPage(
-                          Appointment(start: event.start, stop: event.stop),
+                          Appointment(start: event.start, end: event.end),
                         ),
                   ),
                 );
@@ -153,7 +156,7 @@ class AppointmentDetailsPage extends StatelessWidget {
             leading: Icon(Icons.timelapse),
             title: Text(DateFormat('HH:MM').format(appointment.start) +
                 ' - ' +
-                DateFormat('HH:MM').format(appointment.stop)),
+                DateFormat('HH:MM').format(appointment.end)),
           ),
           // Students
           ListTile(
@@ -174,31 +177,131 @@ class AppointmentDetailsPage extends StatelessWidget {
                 : Wrap(
                     spacing: 8.0,
                     children: appointment.students.map((student) {
+                      // TODO Replace with actual vehicles
                       return Chip(label: Text('Grijze Volvo'));
                     }).toList()),
           ),
           // Remarks
           ListTile(
-              leading: Icon(Icons.comment),
-              title: Text(appointment.remark ?? '')),
+            leading: Icon(Icons.comment),
+            title: Text(appointment.remark ?? ''),
+          ),
         ],
       ),
     );
   }
-
-  void _onEdit() {}
 }
 
-class AppointmentEditPage extends StatelessWidget {
+class AppointmentEditPage extends StatefulWidget {
   final Appointment appointment;
 
   AppointmentEditPage(this.appointment);
 
   @override
+  _AppointmentEditPageState createState() {
+    return new _AppointmentEditPageState(this.appointment);
+  }
+}
+
+class _AppointmentEditPageState extends State<AppointmentEditPage> {
+  Appointment appointment;
+
+  _AppointmentEditPageState(this.appointment);
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: appointment.start,
+      firstDate: new DateTime(2016),
+      lastDate: new DateTime(2020),
+    );
+
+    if (picked != null) {
+      setState(() {
+        appointment.start = new DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          appointment.start.hour,
+          appointment.start.minute,
+        );
+        appointment.end = new DateTime(
+          picked.year,
+          picked.month,
+          picked.day,
+          appointment.end.hour,
+          appointment.end.minute,
+        );
+      });
+      print("Date selected: ${appointment.start}");
+    }
+  }
+
+  Future<Null> _selectStartTime(BuildContext context) async {
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: new TimeOfDay.fromDateTime(appointment.start),
+    );
+
+    if (picked != null) {
+      int diffHours = picked.hour - appointment.start.hour;
+      int diffMinutes = picked.minute - appointment.start.minute;
+      setState(() {
+        appointment.start = new DateTime(
+          appointment.start.year,
+          appointment.start.month,
+          appointment.start.day,
+          appointment.start.hour + diffHours,
+          appointment.start.minute + diffMinutes,
+        );
+        appointment.end = new DateTime(
+          appointment.end.year,
+          appointment.end.month,
+          appointment.end.day,
+          appointment.end.hour + diffHours,
+          appointment.end.minute + diffMinutes,
+        );
+      });
+      print("Date selected: ${appointment.start}");
+    }
+  }
+
+  Future<Null> _selectEndTime(BuildContext context) async {
+    final TimeOfDay picked = await showTimePicker(
+      context: context,
+      initialTime: new TimeOfDay.fromDateTime(appointment.end),
+    );
+
+    if (picked != null) {
+      setState(() {
+        appointment.end = new DateTime(
+          appointment.end.year,
+          appointment.end.month,
+          appointment.end.day,
+          picked.hour,
+          picked.minute,
+        );
+      });
+      print("Date selected: ${appointment.start}");
+    }
+  }
+
+  void _removeStudent(Student student) {
+    print("Removed student $student");
+    // TODO
+  }
+
+  void _removeVehicle(var vehicle) {
+    // TODO
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: new Text('Nieuwe afspraak'),
+        title: new Text(appointment.itemType == ''
+            ? 'Afspraak bewerken'
+            : 'Nieuwe afspraak'),
       ),
       body: Center(
         child: ListView(
@@ -212,13 +315,24 @@ class AppointmentEditPage extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.event),
               title: Text(DateFormat('dd MMMM y').format(appointment.start)),
+              onTap: () {
+                _selectDate(context);
+              },
             ),
             // Start time
             ListTile(
+              leading: Icon(Icons.schedule),
+              title: Text(DateFormat('HH:MM').format(appointment.start)),
+              onTap: () {
+                _selectStartTime(context);
+              },
+            ),
+            ListTile(
               leading: Icon(Icons.timelapse),
-              title: Text(DateFormat('HH:MM').format(appointment.start) +
-                  ' - ' +
-                  DateFormat('HH:MM').format(appointment.stop)),
+              title: Text(DateFormat('HH:MM').format(appointment.end)),
+              onTap: () {
+                _selectEndTime(context);
+              },
             ),
             // Students
             ListTile(
@@ -227,9 +341,14 @@ class AppointmentEditPage extends StatelessWidget {
                   ? Text('(geen leerlingen)')
                   : Wrap(
                       spacing: 8.0,
+                      runSpacing: 6.0,
                       children: appointment.students.map((student) {
-                        return Chip(label: Text(student.name));
+                        return Chip(
+                          label: Text(student.name),
+                          onDeleted: () => _removeStudent(student),
+                        );
                       }).toList()),
+              trailing: Icon(Icons.add),
             ),
             // Vehicles
             ListTile(
@@ -238,14 +357,26 @@ class AppointmentEditPage extends StatelessWidget {
                   ? Text('(geen voertuig)')
                   : Wrap(
                       spacing: 8.0,
-                      children: appointment.students.map((student) {
-                        return Chip(label: Text('Grijze Volvo'));
+                      runSpacing: 6.0,
+                      children: appointment.students.map((vehicle) {
+                        return Chip(
+                          label: Text('Grijze Volvo'),
+                          onDeleted: () => _removeVehicle(vehicle),
+                        );
                       }).toList()),
+              trailing: Icon(Icons.add),
             ),
             // Remarks
             ListTile(
-                leading: Icon(Icons.comment),
-                title: Text(appointment.remark ?? '')),
+              leading: Icon(Icons.comment),
+              title: TextFormField(
+                initialValue: appointment.remark,
+              ),
+            ),
+            new Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RaisedButton(child: new Text('Opslaan'), onPressed: null,),
+            ),
           ],
         ),
       ),

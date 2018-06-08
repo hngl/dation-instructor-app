@@ -10,7 +10,7 @@ class SoapClient {
   Future<xml.XmlDocument> makeRequest(
       {String action = '', String body = ''}) async {
     var requestBody = makeEnvelope(body).trim();
-    print("SoapClient: starting request with body ${requestBody}");
+    print("SoapClient: starting request with body $requestBody");
 
     http.Response response = await http.post(endpoint,
         headers: {
