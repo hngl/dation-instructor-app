@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dation_app/dation_models.dart';
 import 'package:dation_app/dation_ws_client.dart';
 import 'package:dation_app/generic_pages.dart';
 import 'package:flutter/material.dart';

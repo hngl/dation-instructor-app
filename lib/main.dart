@@ -4,6 +4,7 @@ import 'package:dation_app/dation_ws_client.dart';
 import 'package:dation_app/login_page.dart';
 import 'package:dation_app/students_page.dart';
 import 'package:flutter/material.dart';
+import 'package:dation_app/dation_models.dart';
 
 final String _wsHost = 'https://dashboard.dation.nl';
 
