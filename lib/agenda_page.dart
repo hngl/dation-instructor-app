@@ -213,7 +213,18 @@ class AppointmentDetailsPage extends StatelessWidget {
                 ),
               );
             },
-          )
+          ),
+          IconButton(
+            icon: Icon(Icons.delete_forever),
+            onPressed: () {
+              _client.deleteAppointment(appointment).then((value) {
+                debugPrint("Deletion successed!");
+                Navigator.of(context).pop();
+              }).catchError((error) {
+                print("Deletion failed: $error");
+              });
+            },
+          ),
         ],
       ),
       body: ListView(

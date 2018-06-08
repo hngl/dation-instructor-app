@@ -143,4 +143,20 @@ class DationWsClient {
         );
     }
   }
+
+  Future<dynamic> deleteAppointment(Appointment appointment) {
+    debugPrint("Deleting from server ${appointment}");
+    return agendaSoapClient.makeRequest(body: '''<agenda_request_get_delete_agenda_item>
+			<request xsi:type="ns2:Delete_Agenda_Item_Request">
+				<item xsi:type="xsd:int">${appointment.id}</item>
+				<type xsi:type="xsd:string">item</type>
+				<RijschoolId xsi:type="xsd:string">${tenant.id}</RijschoolId>
+				<UserId xsi:type="xsd:int">${user.id}</UserId>
+				<UserName xsi:type="xsd:string">${user.name}</UserName>
+				<Handle xsi:type="xsd:string">${tenant.handle}</Handle>
+				<SessionID xsi:nil="true"/>
+				<ipaddress xsi:type="xsd:string">178.170.155.84</ipaddress>
+			</request>
+		</agenda_request_get_delete_agenda_item>''');
+  }
 }
