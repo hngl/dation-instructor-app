@@ -29,7 +29,7 @@ class _AgendaPageState extends State<AgendaPage> {
           date: _date,
         ),
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-          if(snapshot.hasError) {
+          if (snapshot.hasError) {
             print(snapshot.error);
             return PageLoadingError('Fout bij het ophalen van afspraken.');
           }
@@ -156,6 +156,57 @@ class AppointmentDetailsPage extends StatelessWidget {
         "Building AppointmentDetailsPage for $appointment {students: ${appointment
             .students}, remark: ${appointment.remark}}");
 
+    List detailWidgets = <Widget>[
+      // Item Type
+      ListTile(
+        leading: Icon(Icons.label),
+        title: Text(appointment.itemType ?? '(onbekend)'),
+      ),
+      // Date
+      ListTile(
+        leading: Icon(Icons.event),
+        title: Text(DateFormat('dd MMMM y').format(appointment.start)),
+      ),
+      // Start time
+      ListTile(
+        leading: Icon(Icons.timelapse),
+        title: Text(DateFormat('HH:MM').format(appointment.start) +
+            ' - ' +
+            DateFormat('HH:MM').format(appointment.end)),
+      ),
+      // Students
+      ListTile(
+        leading: Icon(Icons.people),
+        title: appointment.students == null
+            ? Text('(geen leerlingen)')
+            : Wrap(
+                spacing: 8.0,
+                children: appointment.students.map((student) {
+                  return Chip(label: Text(student.name));
+                }).toList()),
+      ),
+      // Vehicles
+      ListTile(
+        leading: Icon(Icons.directions_car),
+        title: appointment.students == null
+            ? Text('(geen voertuig)')
+            : Wrap(
+                spacing: 8.0,
+                children: appointment.students.map((student) {
+                  // TODO Replace with actual vehicles
+                  return Chip(label: Text('Grijze Volvo'));
+                }).toList()),
+      ),
+    ];
+
+    // Remarks
+    if (appointment.remark != null && appointment.remark != '') {
+      detailWidgets.add(ListTile(
+        leading: Icon(Icons.comment),
+        title: Text(appointment.remark),
+      ));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Afspraak'),
@@ -175,53 +226,7 @@ class AppointmentDetailsPage extends StatelessWidget {
         ],
       ),
       body: ListView(
-        children: <Widget>[
-          // Item Type
-          ListTile(
-            leading: Icon(Icons.label),
-            title: Text(appointment.itemType ?? '(onbekend)'),
-          ),
-          // Date
-          ListTile(
-            leading: Icon(Icons.event),
-            title: Text(DateFormat('dd MMMM y').format(appointment.start)),
-          ),
-          // Start time
-          ListTile(
-            leading: Icon(Icons.timelapse),
-            title: Text(DateFormat('HH:MM').format(appointment.start) +
-                ' - ' +
-                DateFormat('HH:MM').format(appointment.end)),
-          ),
-          // Students
-          ListTile(
-            leading: Icon(Icons.people),
-            title: appointment.students == null
-                ? Text('(geen leerlingen)')
-                : Wrap(
-                    spacing: 8.0,
-                    children: appointment.students.map((student) {
-                      return Chip(label: Text(student.name));
-                    }).toList()),
-          ),
-          // Vehicles
-          ListTile(
-            leading: Icon(Icons.directions_car),
-            title: appointment.students == null
-                ? Text('(geen voertuig)')
-                : Wrap(
-                    spacing: 8.0,
-                    children: appointment.students.map((student) {
-                      // TODO Replace with actual vehicles
-                      return Chip(label: Text('Grijze Volvo'));
-                    }).toList()),
-          ),
-          // Remarks
-          ListTile(
-            leading: Icon(Icons.comment),
-            title: Text(appointment.remark ?? ''),
-          ),
-        ],
+        children: detailWidgets,
       ),
     );
   }
