@@ -109,22 +109,26 @@ class _AgendaPageState extends State<AgendaPage> {
         }
         if (event is AgendaBlock) {
           tile = ListTile(
-              leading: Column(children: <Widget>[
+            leading: Column(
+              children: <Widget>[
                 Text(timeFormatter.format(event.start)),
                 Text(timeFormatter.format(event.end)),
-              ]),
-              title: Text('(vrij blok)'),
-              trailing: Icon(Icons.add, color: Theme.of(context).primaryColor),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => AppointmentEditPage(
-                          Appointment(start: event.start, end: event.end),
-                        ),
-                  ),
-                );
-              });
+              ],
+            ),
+            title: Text('(vrij blok)'),
+            trailing: Icon(Icons.add, color: Theme.of(context).primaryColor),
+// TODO Implement proper editing
+//              onTap: () {
+//                Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                    builder: (BuildContext context) => AppointmentEditPage(
+//                          Appointment(start: event.start, end: event.end),
+//                        ),
+//                  ),
+//                );
+//              },
+          );
         }
 
         widgetList.add(tile);
