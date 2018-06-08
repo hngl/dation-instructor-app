@@ -3,6 +3,7 @@
 class Student {
   int id;
   String name;
+  int courseId;
 
   Student(this.id, this.name);
 
@@ -31,7 +32,7 @@ class AgendaBlock extends AgendaEvent {
 class Appointment extends AgendaEvent {
   DateTime start;
   DateTime end;
-  String itemType = '';
+  ItemType itemType;
   List<Student> students = List();
   String remark = '';
   int id;
@@ -69,4 +70,11 @@ class Tenant {
   String handle;
 
   Tenant(this.id, this.handle);
+}
+
+class ItemType {
+  int id;
+  String name;
+
+  ItemType({this.id, this.name});
 }

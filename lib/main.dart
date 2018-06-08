@@ -57,8 +57,8 @@ class HomePageState extends State<HomePage> {
     switch (pos) {
       case 0:
         var client = DationWsClient(_wsHost)
-          ..setTenant(Tenant(873, 'dation'))
-          ..setUser(User(1, 'beheerder'));
+          ..tenant = Tenant(873, 'dation')
+          ..user = User(1, 'beheerder');
 
         return AgendaPage(client);
       case 1:

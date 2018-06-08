@@ -27,7 +27,7 @@ class _AgendaPageState extends State<AgendaPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _client.getAgendaBlocks(
+        future: _client.getAgendaOverview(
           instructor: Instructor(1),
           date: _date,
         ),
@@ -145,30 +145,58 @@ class AppointmentSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        leading: Column(children: <Widget>[
-          Text(DateFormat('HH:mm').format(event.start)),
-          Text(DateFormat('HH:mm').format(event.end)),
-        ]),
-        title: Wrap(
-            spacing: 8.0,
-            runSpacing: 6.0,
-            children: List.from([
-              Padding(
-                  padding: const EdgeInsets.only(top: 6.0),
-                  child: Text(event.itemType))
-            ])
-              ..addAll(event.students.map((student) {
-                return Chip(label: Text(student.name));
-              }))),
-        trailing:
-            Icon(Icons.more_horiz, color: Theme.of(context).primaryColor),
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      AppointmentDetailsPage(event)));
-        },
+      leading: Column(children: <Widget>[
+        Text(DateFormat('HH:mm').format(event.start)),
+        Text(DateFormat('HH:mm').format(event.end)),
+      ]),
+      title: Wrap(
+          spacing: 8.0,
+          runSpacing: 6.0,
+          children: List.from([
+            Padding(
+                padding: const EdgeInsets.only(top: 6.0),
+                child: Text(event.itemType.name))
+          ])
+            ..addAll(event.students.map((student) {
+              return Chip(label: Text(student.name),);
+            }))),
+      trailing: Icon(Icons.more_horiz, color: Theme.of(context).primaryColor),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    MetaAppointmentDetailsPage(event)));
+      },
+    );
+  }
+}
+
+class MetaAppointmentDetailsPage extends StatelessWidget {
+  final Appointment appointment;
+
+  MetaAppointmentDetailsPage(this.appointment);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _client.getAppointment(appointment),
+      builder: (BuildContext context, AsyncSnapshot<Appointment> snapshot) {
+        if (snapshot.hasError) {
+          print(snapshot.error);
+          return Scaffold(
+            body: PageLoadingError('Fout bij het ophalen van details.'),
+          );
+        }
+
+        if (!snapshot.hasData)
+          // Shows progress indicator until the data is load.
+          return Scaffold(
+            body: PageLoadingIndicator('Details ophalen...'),
+          );
+
+        return AppointmentDetailsPage(snapshot.data);
+      },
     );
   }
 }
@@ -188,7 +216,7 @@ class AppointmentDetailsPage extends StatelessWidget {
       // Item Type
       ListTile(
         leading: Icon(Icons.label),
-        title: Text(appointment.itemType ?? '(onbekend)'),
+        title: Text(appointment.itemType.name ?? '(onbekend)'),
       ),
       // Date
       ListTile(
@@ -364,7 +392,7 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: new Text(appointment.itemType == ''
+        title: new Text(appointment.itemType.name == ''
             ? 'Afspraak bewerken'
             : 'Nieuwe afspraak'),
       ),
@@ -374,7 +402,7 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
             // Item Type
             ListTile(
               leading: Icon(Icons.label),
-              title: Text(appointment.itemType ?? '(onbekend)'),
+              title: Text(appointment.itemType.name ?? '(onbekend)'),
             ),
             // Date
             ListTile(

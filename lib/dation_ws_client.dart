@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'soap_client.dart';
 
 class DationWsClient {
-  String host;
+  final String host;
   SoapClient agendaSoapClient;
   User user;
   Tenant tenant;
@@ -27,16 +27,33 @@ class DationWsClient {
     return element.findElements(child).first.text;
   }
 
-  Future<List<AgendaEvent>> getAgendaBlocks(
-      {Instructor instructor, DateTime date}) async {
+  void _checkForBadResult(xml.XmlDocument response) {
+    var responseElement = response.findAllElements('Response');
+    if (responseElement.length > 0) {
+      if ('false' ==
+          responseElement.first.findElements('StatusResult').first.text)
+        throw new BadResultException(
+          responseElement.first.findElements('ResultMessage').first.text,
+        );
+    }
+  }
+
+  void _debugHead(String msg) {
+    debugPrint(' DationWsClient: $msg'.padLeft(80, '-'));
+  }
+
+  Future<List<AgendaEvent>> getAgendaOverview({
+    @required Instructor instructor,
+    @required DateTime date,
+  }) async {
     int requestedTimeStamp = (date.millisecondsSinceEpoch / 1000).floor();
 
     debugPrint(
         "DationWsClient: Fetching agenda blocks with stamp $requestedTimeStamp");
 
     // Make request
-    var doc = await agendaSoapClient
-        .makeRequest(body: '''<agenda_request_get_agenda_blok>
+    var doc = await agendaSoapClient.makeRequest(
+      body: '''<agenda_request_get_agenda_blok>
         <request xsi:type="ns2:Get_Agenda_Blok_Request">
           <instructeur xsi:type="xsd:int">${instructor.id}</instructeur>
           <timestamp xsi:type="xsd:int">$requestedTimeStamp</timestamp>
@@ -46,7 +63,8 @@ class DationWsClient {
           <RijschoolId xsi:type="xsd:string">${tenant.id}</RijschoolId>
           <SessionID xsi:nil="true"/>
         </request>
-		  </agenda_request_get_agenda_blok>''');
+		  </agenda_request_get_agenda_blok>''',
+    );
 
     // Parse response
     var items =
@@ -60,7 +78,7 @@ class DationWsClient {
           end: _unixToDateTime(_childText(eventNode, 'stop')),
         );
       } else {
-        debugPrint("DationWsClient: Parsing xml for 'les'");
+        _debugHead("Parsing xml for 'les'");
         List<Student> students = List();
         if (eventNode.findElements('studentsList').length > 0) {
           debugPrint("Element 'studentsList' found");
@@ -71,21 +89,19 @@ class DationWsClient {
             students.add(Student(
               int.parse(studentNode.findElements('id').first.text),
               studentNode.findElements('name').first.text,
-            ));
+            )..courseId = int.parse(_childText(studentNode, 'courseId')));
           }
         }
 
-        debugPrint('DationWsClient: Populating Appointment');
+        _debugHead('Populating Appointment');
         debugPrint(eventNode.toXmlString(pretty: true));
         event = Appointment(
           id: int.parse(_childText(eventNode, 'id')),
           start: _unixToDateTime(_childText(eventNode, 'start')),
           end: _unixToDateTime(_childText(eventNode, 'stop')),
-          itemType: _childText(eventNode, 'itemtype'),
+          itemType: new ItemType(name: _childText(eventNode, 'itemtype')),
           students: students,
         );
-
-        debugPrint('DationWsClient: Appointment populated');
       }
 
       events.add(event);
@@ -94,12 +110,37 @@ class DationWsClient {
     return events;
   }
 
-  void setUser(User user) {
-    this.user = user;
-  }
+  Future<Appointment> getAppointment(Appointment appointment) async {
+    var response = await agendaSoapClient.makeRequest(
+      body: '''<agenda_request_editing_agenda_item>
+			<request xsi:type="ns2:Editing_Agenda_Item_Request">
+				<item xsi:type="xsd:int">${appointment.id}</item>
+				<instructeur xsi:type="xsd:int">${user.id}</instructeur>
+				<timestamp xsi:type="xsd:int">0</timestamp>
+				<RijschoolId xsi:type="xsd:string">${tenant.id}</RijschoolId>
+				<UserId xsi:type="xsd:int">${user.id}</UserId>
+				<UserName xsi:type="xsd:string">${user.name}</UserName>
+				<Handle xsi:type="xsd:string">${tenant.handle}</Handle>
+				<SessionID xsi:nil="true"/>
+			</request>
+		</agenda_request_editing_agenda_item>''',
+    );
 
-  void setTenant(Tenant tenant) {
-    this.tenant = tenant;
+    _checkForBadResult(response);
+
+    var itemNode =
+        response.findAllElements('AgendaItemList').first.children.first;
+
+    _debugHead('Parsing Appointment details');
+    debugPrint(itemNode.toXmlString(pretty: true));
+
+    appointment.itemType = new ItemType(
+      id: int.parse(_childText(itemNode, 'Type')),
+      name: _childText(itemNode, 'Typename'),
+    );
+
+    debugPrint(itemNode.toXmlString(pretty: true));
+    return appointment;
   }
 
   Future<Null> saveAppointment(Appointment appointment, int typeId) async {
@@ -116,7 +157,7 @@ class DationWsClient {
 				<uitslag xsi:type="xsd:int">0</uitslag>
 				<overig xsi:type="xsd:int">0</overig>
 				<declarabel xsi:type="xsd:int">0</declarabel>
-				<leerlingen xsi:type="xsd:string">${appointment.students.first.id}</leerlingen>
+				<leerlingen xsi:type="xsd:string">${appointment.students.first.courseId}</leerlingen>
 				<voertuigen xsi:type="xsd:string"></voertuigen>
 				<RijschoolId xsi:type="xsd:string">${tenant.id}</RijschoolId>
 				<UserId xsi:type="xsd:int">${user.id}</UserId>
@@ -131,18 +172,6 @@ class DationWsClient {
     _checkForBadResult(response);
 
     debugPrint("Response ${response.toXmlString(pretty: true)}");
-  }
-
-  void _checkForBadResult(xml.XmlDocument response) {
-    debugPrint("Check fror Bad Result: ${response.toXmlString(pretty: true)}");
-    var responseElement = response.findAllElements('Response');
-    if (responseElement.length > 0) {
-      if ('false' ==
-          responseElement.first.findElements('StatusResult').first.text)
-        throw new FalseStatusResultException(
-          responseElement.first.findElements('ResultMessage').first.text,
-        );
-    }
   }
 
   Future<dynamic> deleteAppointment(Appointment appointment) {
@@ -161,5 +190,16 @@ class DationWsClient {
 			</request>
 		</agenda_request_get_delete_agenda_item>''',
     );
+  }
+}
+
+/// Thrown when response message contains a Response element with a StatusResult element of value false
+class BadResultException implements Exception {
+  final String message;
+
+  BadResultException(this.message);
+
+  String toString() {
+    return "BadResult: $message";
   }
 }

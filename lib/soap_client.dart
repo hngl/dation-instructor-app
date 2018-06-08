@@ -8,10 +8,13 @@ class SoapClient {
 
   SoapClient(this.endpoint);
 
-  Future<xml.XmlDocument> makeRequest(
-      {String action = '', String body = ''}) async {
+  Future<xml.XmlDocument> makeRequest({
+    String action = '',
+    String body = '',
+  }) async {
     var requestBody = makeEnvelope(body).trim();
-    debugPrint("SoapClient: starting request with body $requestBody");
+    debugPrint(" SoapClient: starting request with following body".padLeft(80, '-'));
+    debugPrint(requestBody);
 
     http.Response response = await http.post(endpoint,
         headers: {
@@ -22,8 +25,7 @@ class SoapClient {
 
     // Check for HTTP error
     if (response.statusCode >= 400) {
-      throw Exception("Server returned ${response.reasonPhrase} (${response
-              .statusCode}): ${response.body}");
+      throw Exception("${response.reasonPhrase} (${response.statusCode}): ${response.body}");
     }
 
     // Parse response to XML
@@ -54,22 +56,11 @@ class SoapClient {
 }
 
 class SoapFaultException implements Exception {
-  String faultString;
+  final String faultString;
 
   SoapFaultException(this.faultString);
 
   String toString() {
     return "SoapFault: $faultString";
-  }
-}
-
-/// Thrown when response message contains a Response element with a StatusResult element of value false
-class FalseStatusResultException implements Exception {
-  String message;
-
-  FalseStatusResultException(this.message);
-
-  String toString() {
-    return "StatusResult is false: $message";
   }
 }
