@@ -66,8 +66,10 @@ class _AgendaPageState extends State<AgendaPage> {
                 ),
               ),
               Expanded(
-                  child:
-                      ListView(children: _buildEventSummaries(context, events)))
+                child: ListView(
+                  children: _buildEventSummaries(context, events),
+                ),
+              )
             ],
           );
         });
@@ -77,61 +79,13 @@ class _AgendaPageState extends State<AgendaPage> {
       BuildContext context, List<AgendaEvent> events) {
     List<Widget> widgetList = List<Widget>();
     if (events != null) {
-      var timeFormatter = DateFormat('HH:mm');
       for (var event in events) {
-        var tile;
         if (event is Appointment) {
-          tile = ListTile(
-              leading: Column(children: <Widget>[
-                Text(timeFormatter.format(event.start)),
-                Text(timeFormatter.format(event.end)),
-              ]),
-              title: Wrap(
-                  spacing: 8.0,
-                  runSpacing: 6.0,
-                  children: List.from([
-                    Padding(
-                        padding: const EdgeInsets.only(top: 6.0),
-                        child: Text(event.itemType))
-                  ])
-                    ..addAll(event.students.map((student) {
-                      return Chip(label: Text(student.name));
-                    }))),
-              trailing:
-                  Icon(Icons.more_horiz, color: Theme.of(context).primaryColor),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            AppointmentDetailsPage(event)));
-              });
+          widgetList.add(AppointmentSummary(event));
         }
         if (event is AgendaBlock) {
-          tile = ListTile(
-            leading: Column(
-              children: <Widget>[
-                Text(timeFormatter.format(event.start)),
-                Text(timeFormatter.format(event.end)),
-              ],
-            ),
-            title: Text('(vrij blok)'),
-            trailing: Icon(Icons.add, color: Theme.of(context).primaryColor),
-// TODO Implement proper editing
-//              onTap: () {
-//                Navigator.push(
-//                  context,
-//                  MaterialPageRoute(
-//                    builder: (BuildContext context) => AppointmentEditPage(
-//                          Appointment(start: event.start, end: event.end),
-//                        ),
-//                  ),
-//                );
-//              },
-          );
+          widgetList.add(AgendaBlockSummary(event));
         }
-
-        widgetList.add(tile);
       }
     }
     return widgetList;
@@ -149,6 +103,73 @@ class _AgendaPageState extends State<AgendaPage> {
     setState(() {
       _date = _date.add(Duration(days: 1));
     });
+  }
+}
+
+class AgendaBlockSummary extends StatelessWidget {
+  final AgendaBlock event;
+
+  AgendaBlockSummary(this.event);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Column(
+        children: <Widget>[
+          Text(DateFormat('HH:mm').format(event.start)),
+          Text(DateFormat('HH:mm').format(event.end)),
+        ],
+      ),
+      title: Text('(vrij blok)'),
+      trailing: Icon(Icons.add, color: Theme.of(context).primaryColor),
+// TODO Implement proper editing
+//              onTap: () {
+//                Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                    builder: (BuildContext context) => AppointmentEditPage(
+//                          Appointment(start: event.start, end: event.end),
+//                        ),
+//                  ),
+//                );
+//              },
+    );
+  }
+}
+
+class AppointmentSummary extends StatelessWidget {
+  final Appointment event;
+
+  AppointmentSummary(this.event);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        leading: Column(children: <Widget>[
+          Text(DateFormat('HH:mm').format(event.start)),
+          Text(DateFormat('HH:mm').format(event.end)),
+        ]),
+        title: Wrap(
+            spacing: 8.0,
+            runSpacing: 6.0,
+            children: List.from([
+              Padding(
+                  padding: const EdgeInsets.only(top: 6.0),
+                  child: Text(event.itemType))
+            ])
+              ..addAll(event.students.map((student) {
+                return Chip(label: Text(student.name));
+              }))),
+        trailing:
+            Icon(Icons.more_horiz, color: Theme.of(context).primaryColor),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      AppointmentDetailsPage(event)));
+        },
+    );
   }
 }
 
