@@ -41,8 +41,7 @@ class MenuItem {
 class HomePage extends StatefulWidget {
   final drawerItems = [
     MenuItem('Agenda', icon: Icons.calendar_today),
-    MenuItem('Leerlingen', icon: Icons.people),
-    MenuItem('Cursussen', icon: Icons.bubble_chart),
+    // TODO MenuItem('Leerlingen', icon: Icons.people),
   ];
 
   @override
