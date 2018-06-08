@@ -1,5 +1,5 @@
 import 'package:dation_app/dation_rest_api_client.dart';
-import 'package:dation_app/page_loading_indicator.dart';
+import 'package:dation_app/generic_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -10,6 +10,10 @@ class CourseInstancesPage extends StatelessWidget {
       body: FutureBuilder(
           future: getCourseInstances(),
           builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+            if (snapshot.hasError)
+              return PageLoadingError(
+                  "Fout bij het ophalen van cursussen. ${snapshot.error}");
+
             if (!snapshot.hasData)
               // Shows progress indicator until the data is load.
               return PageLoadingIndicator('Cursussen ophalen...');
@@ -74,8 +78,8 @@ class CourseInstanceDetailPage extends StatelessWidget {
         ),
         ListTile(
             leading: Icon(Icons.verified_user), title: Text("${courseInstance
-                .code95TheoryHours} uur theorie en ${courseInstance
-                .code95TheoryHours} uur praktijk"), subtitle: Text('Code 95')),
+            .code95TheoryHours} uur theorie en ${courseInstance
+            .code95TheoryHours} uur praktijk"), subtitle: Text('Code 95')),
         ListTile(
             leading: Icon(Icons.event_seat),
             title: Text(courseInstance.remainingAttendeeCapacity > 0

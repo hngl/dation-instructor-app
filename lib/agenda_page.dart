@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:dation_app/dation_ws_client.dart';
-import 'package:dation_app/page_loading_indicator.dart';
+import 'package:dation_app/generic_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
