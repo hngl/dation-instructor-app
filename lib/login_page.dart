@@ -13,6 +13,7 @@ class _LoginPageState extends State<LoginPage> {
 
   String _username;
   String _password;
+  String _handle;
 
   void _submit() {
     final form = formKey.currentState;
@@ -21,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
       form.save();
     }
 
-    print("Submitted $_username:$_password");
+    print("Submitted $_username@$_handle:$_password");
     onAuthStateChanged();
   }
 
@@ -42,47 +43,56 @@ class _LoginPageState extends State<LoginPage> {
           buttonColor: Theme.of(context).accentColor),
       child: Scaffold(
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Image.network(
-                'http://www.dation.nl/wp-content/uploads/2018/04/elephant_white-300x257.png',
-              ),
-              Form(
-                key: formKey,
-                child: Padding(
-                  padding: EdgeInsets.all(30.0),
-                  child: Column(
-                    children: <Widget>[
-                      TextFormField(
-                        initialValue: 'beheerder',
-                        onSaved: (val) => _username = val,
-                        decoration:
-                            InputDecoration(labelText: "Gebruikersnaam"),
-                      ),
-                      SizedBox(height: 24.0),
-                      TextFormField(
-                        initialValue: 'beheerder12',
-                        obscureText: true,
-                        onSaved: (val) => _password = val,
-                        decoration: InputDecoration(labelText: "Wachtwoord"),
-                      ),
-                      SizedBox(height: 48.0),
-                      RaisedButton(
-                        onPressed: _submit,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 18.0,
-                            horizontal: 40.0,
-                          ),
-                          child: Text('Aanmelden'),
-                        ),
-                      ),
-                    ],
-                  ),
+          child: new SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Image.network(
+                  'http://www.dation.nl/wp-content/uploads/2018/04/elephant_white-300x257.png',
                 ),
-              )
-            ],
+                Form(
+                  key: formKey,
+                  child: Padding(
+                    padding: EdgeInsets.all(30.0),
+                    child: Column(
+                      children: <Widget>[
+                        TextFormField(
+                          initialValue: 'dation',
+                          onSaved: (val) => _handle = val,
+                          decoration:
+                          InputDecoration(labelText: "Rijschool"),
+                        ),
+                        SizedBox(height: 12.0),
+                        TextFormField(
+                          initialValue: 'beheerder',
+                          onSaved: (val) => _username = val,
+                          decoration:
+                          InputDecoration(labelText: "Gebruikersnaam"),
+                        ),
+                        SizedBox(height: 12.0),
+                        TextFormField(
+                          initialValue: 'beheerder12',
+                          obscureText: true,
+                          onSaved: (val) => _password = val,
+                          decoration: InputDecoration(labelText: "Wachtwoord"),
+                        ),
+                        SizedBox(height: 36.0),
+                        RaisedButton(
+                          onPressed: _submit,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 18.0,
+                              horizontal: 40.0,
+                            ),
+                            child: Text('Aanmelden'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
