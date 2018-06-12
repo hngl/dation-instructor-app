@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'package:dation_app/dation_models.dart';
 import 'package:dation_app/dation_ws_client.dart';
 import 'package:dation_app/generic_pages.dart';
@@ -158,7 +158,7 @@ class AppointmentSummary extends StatelessWidget {
                 child: Text(event.itemType.name))
           ])
             ..addAll(event.students.map((student) {
-              return Chip(label: Text(student.name),);
+              return StudentChip(student);
             }))),
       trailing: Icon(Icons.more_horiz, color: Theme.of(context).primaryColor),
       onTap: () {
@@ -238,7 +238,7 @@ class AppointmentDetailsPage extends StatelessWidget {
             : Wrap(
                 spacing: 8.0,
                 children: appointment.students.map((student) {
-                  return Chip(label: Text(student.name));
+                  return new StudentChip(student);
                 }).toList()),
       ),
     ];
@@ -283,6 +283,27 @@ class AppointmentDetailsPage extends StatelessWidget {
       body: ListView(
         children: detailWidgets,
       ),
+    );
+  }
+}
+
+class StudentChip extends StatelessWidget {
+  final Student student;
+
+  StudentChip(this.student);
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionChip(
+      label: Text(student.name),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => StudentDetailsPage(student),
+          ),
+        );
+      },
     );
   }
 }
@@ -469,6 +490,39 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class StudentDetailsPage extends StatelessWidget {
+  final Student student;
+
+  StudentDetailsPage(this.student);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(student.name),
+      ),
+      body: ListView(
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.perm_identity),
+            title: Text(student.name),
+          ),
+          ListTile(
+            leading: Icon(Icons.phone),
+            title: Text('0610593071'),
+            trailing: Icon(Icons.call),
+            onTap: () => launch('tel:+31610593071'),
+          ),
+          ListTile(
+            leading: Icon(Icons.location_on),
+            title: Text('Spoorstraat 114, Hengelo'),
+          ),
+        ],
       ),
     );
   }
