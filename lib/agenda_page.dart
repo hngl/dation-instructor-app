@@ -117,7 +117,7 @@ class AgendaBlockSummary extends StatelessWidget {
       leading: Column(
         children: <Widget>[
           Text(DateFormat('HH:mm').format(event.start)),
-          Text(DateFormat('HH:mm').format(event.end)),
+          Text(DateFormat('HH:mm').format(event.end), style: TextStyle(color: Colors.black45)),
         ],
       ),
       title: Text('(vrij blok)'),
@@ -147,7 +147,7 @@ class AppointmentSummary extends StatelessWidget {
     return ListTile(
       leading: Column(children: <Widget>[
         Text(DateFormat('HH:mm').format(event.start)),
-        Text(DateFormat('HH:mm').format(event.end)),
+        Text(DateFormat('HH:mm').format(event.end), style: TextStyle(color: Colors.black45)),
       ]),
       title: Wrap(
           spacing: 8.0,
