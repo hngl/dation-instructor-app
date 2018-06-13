@@ -38,27 +38,26 @@ class _LoginPageState extends State<LoginPage> {
       data: ThemeData(
         canvasColor: Theme.of(context).primaryColor,
         brightness: Brightness.dark,
-        accentColor: Theme.of(context).accentColor,
         splashColor: Theme.of(context).splashColor,
         buttonColor: Colors.white,
       ),
       child: Scaffold(
-        body: new Container(
-          decoration: new BoxDecoration(
-            image: new DecorationImage(
-              image: new AssetImage(
+        body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
                   'assets/graphics/adventure-agriculture-auto-754595.png'),
               fit: BoxFit.cover,
             ),
           ),
-          child: new Padding(
+          child: Padding(
             padding: const EdgeInsets.all(50.0),
             child: Center(
-              child: new SingleChildScrollView(
+              child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    new Padding(
+                    Padding(
                       padding: const EdgeInsets.all(25.0),
                       child: Image.asset(
                         'assets/graphics/logo_white.png',
@@ -101,8 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                                     color: Colors.deepPurple[900], fontSize: 16.0),
                               ),
                             ),
-                            shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(20.0)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)),
                           ),
                         ],
                       ),
