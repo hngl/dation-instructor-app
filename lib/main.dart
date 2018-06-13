@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         primaryColor: Colors.purple[800],
-        accentColor: Colors.lightBlue[200],
         splashColor: Colors.redAccent,
         buttonColor: Colors.lightBlue[200],
       ),
@@ -41,7 +40,6 @@ class MenuItem {
 class HomePage extends StatefulWidget {
   final drawerItems = [
     MenuItem('Agenda', icon: Icons.calendar_today),
-    // TODO MenuItem('Leerlingen', icon: Icons.people),
   ];
 
   @override
@@ -61,10 +59,6 @@ class HomePageState extends State<HomePage> {
           ..user = User(1, 'beheerder');
 
         return AgendaPage(client);
-      case 1:
-        return StudentsListPage();
-      case 2:
-        return CourseInstancesPage();
 
       default:
         return Text("Error");

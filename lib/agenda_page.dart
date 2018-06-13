@@ -15,7 +15,7 @@ class AgendaPage extends StatefulWidget {
 
   @override
   _AgendaPageState createState() {
-    return new _AgendaPageState(DateTime.now());
+    return _AgendaPageState(DateTime.now());
   }
 }
 
@@ -24,49 +24,36 @@ class _AgendaPageState extends State<AgendaPage> {
 
   _AgendaPageState(this._date);
 
+  get _initialIndex => DateTime.now().difference(_initialDate).inDays;
+
+  get _initialDate => DateTime(0, DateTime.january, 1);
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          padding: const EdgeInsets.all(14.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.arrow_left),
-                onPressed: _prevDay,
+    return PageView.builder(
+      controller: PageController(initialPage: _initialIndex),
+      itemBuilder: (BuildContext context, int index) {
+        return Column(
+          children: <Widget>[
+            Container(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  DateFormat('d MMMM y')
+                      .format(_initialDate.add(Duration(days: index))),
+                ),
               ),
-              Text(
-                DateFormat('d MMMM y').format(_date),
-                style: TextStyle(color: Theme.of(context).accentColor),
+            ),
+            Divider(),
+            Expanded(
+              child: FutureEventListView(
+                _initialDate.add(Duration(days: index)),
               ),
-              IconButton(
-                icon: Icon(Icons.arrow_right),
-                onPressed: _nextDay,
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: FutureEventListView(_date),
-        )
-      ],
+            ),
+          ],
+        );
+      },
     );
-  }
-
-  /// Flip to previous day
-  void _prevDay() {
-    setState(() {
-      _date = _date.subtract(Duration(days: 1));
-    });
-  }
-
-  /// Flip to next day
-  void _nextDay() {
-    setState(() {
-      _date = _date.add(Duration(days: 1));
-    });
   }
 }
 
@@ -252,7 +239,7 @@ class AppointmentDetailsPage extends StatelessWidget {
             : Wrap(
                 spacing: 8.0,
                 children: appointment.students.map((student) {
-                  return new StudentChip(student);
+                  return StudentChip(student);
                 }).toList()),
       ),
     ];
@@ -329,7 +316,7 @@ class AppointmentEditPage extends StatefulWidget {
 
   @override
   _AppointmentEditPageState createState() {
-    return new _AppointmentEditPageState(this.appointment);
+    return _AppointmentEditPageState(this.appointment);
   }
 }
 
@@ -342,20 +329,20 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: appointment.start,
-      firstDate: new DateTime(2016),
-      lastDate: new DateTime(2020),
+      firstDate: DateTime(2016),
+      lastDate: DateTime(2020),
     );
 
     if (picked != null) {
       setState(() {
-        appointment.start = new DateTime(
+        appointment.start = DateTime(
           picked.year,
           picked.month,
           picked.day,
           appointment.start.hour,
           appointment.start.minute,
         );
-        appointment.end = new DateTime(
+        appointment.end = DateTime(
           picked.year,
           picked.month,
           picked.day,
@@ -370,21 +357,21 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
   Future<Null> _selectStartTime(BuildContext context) async {
     final TimeOfDay picked = await showTimePicker(
       context: context,
-      initialTime: new TimeOfDay.fromDateTime(appointment.start),
+      initialTime: TimeOfDay.fromDateTime(appointment.start),
     );
 
     if (picked != null) {
       int diffHours = picked.hour - appointment.start.hour;
       int diffMinutes = picked.minute - appointment.start.minute;
       setState(() {
-        appointment.start = new DateTime(
+        appointment.start = DateTime(
           appointment.start.year,
           appointment.start.month,
           appointment.start.day,
           appointment.start.hour + diffHours,
           appointment.start.minute + diffMinutes,
         );
-        appointment.end = new DateTime(
+        appointment.end = DateTime(
           appointment.end.year,
           appointment.end.month,
           appointment.end.day,
@@ -399,12 +386,12 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
   Future<Null> _selectEndTime(BuildContext context) async {
     final TimeOfDay picked = await showTimePicker(
       context: context,
-      initialTime: new TimeOfDay.fromDateTime(appointment.end),
+      initialTime: TimeOfDay.fromDateTime(appointment.end),
     );
 
     if (picked != null) {
       setState(() {
-        appointment.end = new DateTime(
+        appointment.end = DateTime(
           appointment.end.year,
           appointment.end.month,
           appointment.end.day,
@@ -427,7 +414,7 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: new Text(appointment.itemType.name == ''
+        title: Text(appointment.itemType.name == ''
             ? 'Afspraak bewerken'
             : 'Nieuwe afspraak'),
       ),
@@ -486,11 +473,11 @@ class _AppointmentEditPageState extends State<AppointmentEditPage> {
                 initialValue: appointment.remark,
               ),
             ),
-            new Padding(
+            Padding(
               padding: const EdgeInsets.all(8.0),
               child: RaisedButton(
                 padding: EdgeInsets.all(16.0),
-                child: new Text('Opslaan'),
+                child: Text('Opslaan'),
                 onPressed: () {
                   _client.saveAppointment(appointment, 17).then((v) {
                     Navigator.of(context).pop();
