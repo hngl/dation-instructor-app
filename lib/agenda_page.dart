@@ -26,69 +26,33 @@ class _AgendaPageState extends State<AgendaPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _client.getAgendaOverview(
-          instructor: Instructor(1),
-          date: _date,
-        ),
-        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-          if (snapshot.hasError) {
-            print(snapshot.error);
-            return PageLoadingError('Fout bij het ophalen van afspraken.');
-          }
-
-          if (!snapshot.hasData)
-            // Shows progress indicator until the data is load.
-            return PageLoadingIndicator('Afspraken ophalen...');
-
-          List events = snapshot.data;
-
-          return Column(
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(14.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(14.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.arrow_left),
-                      onPressed: _prevDay,
-                    ),
-                    Text(
-                      DateFormat('d MMMM y').format(_date),
-                      style: TextStyle(color: Theme.of(context).accentColor),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_right),
-                      onPressed: _nextDay,
-                    ),
-                  ],
-                ),
+              IconButton(
+                icon: Icon(Icons.arrow_left),
+                onPressed: _prevDay,
               ),
-              Expanded(
-                child: ListView(
-                  children: _buildEventSummaries(context, events),
-                ),
-              )
+              Text(
+                DateFormat('d MMMM y').format(_date),
+                style: TextStyle(color: Theme.of(context).accentColor),
+              ),
+              IconButton(
+                icon: Icon(Icons.arrow_right),
+                onPressed: _nextDay,
+              ),
             ],
-          );
-        });
-  }
-
-  List<Widget> _buildEventSummaries(
-      BuildContext context, List<AgendaEvent> events) {
-    List<Widget> widgetList = List<Widget>();
-    if (events != null) {
-      for (var event in events) {
-        if (event is Appointment) {
-          widgetList.add(AppointmentSummary(event));
-        }
-        if (event is AgendaBlock) {
-          widgetList.add(AgendaBlockSummary(event));
-        }
-      }
-    }
-    return widgetList;
+          ),
+        ),
+        Expanded(
+          child: FutureEventListView(_date),
+        )
+      ],
+    );
   }
 
   /// Flip to previous day
@@ -106,6 +70,54 @@ class _AgendaPageState extends State<AgendaPage> {
   }
 }
 
+class FutureEventListView extends StatelessWidget {
+  final DateTime _date;
+
+  FutureEventListView(this._date);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _client.getAgendaOverview(
+        instructor: Instructor(1),
+        date: _date,
+      ),
+      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+        if (snapshot.hasError) {
+          print(snapshot.error);
+          return PageLoadingError('Fout bij het ophalen van afspraken.');
+        }
+
+        if (!snapshot.hasData)
+          // Shows progress indicator until the data is load.
+          return PageLoadingIndicator('Afspraken ophalen...');
+
+        List events = snapshot.data;
+
+        return ListView(
+          children: _buildEventSummaries(context, events),
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildEventSummaries(
+      BuildContext context, List<AgendaEvent> events) {
+    List<Widget> widgetList = List<Widget>();
+    if (events != null) {
+      for (var event in events) {
+        if (event is Appointment) {
+          widgetList.add(AppointmentSummary(event));
+        }
+        if (event is AgendaBlock) {
+          widgetList.add(AgendaBlockSummary(event));
+        }
+      }
+    }
+    return widgetList;
+  }
+}
+
 class AgendaBlockSummary extends StatelessWidget {
   final AgendaBlock event;
 
@@ -117,7 +129,8 @@ class AgendaBlockSummary extends StatelessWidget {
       leading: Column(
         children: <Widget>[
           Text(DateFormat('HH:mm').format(event.start)),
-          Text(DateFormat('HH:mm').format(event.end), style: TextStyle(color: Colors.black45)),
+          Text(DateFormat('HH:mm').format(event.end),
+              style: TextStyle(color: Colors.black45)),
         ],
       ),
       title: Text('(vrij blok)'),
@@ -147,7 +160,8 @@ class AppointmentSummary extends StatelessWidget {
     return ListTile(
       leading: Column(children: <Widget>[
         Text(DateFormat('HH:mm').format(event.start)),
-        Text(DateFormat('HH:mm').format(event.end), style: TextStyle(color: Colors.black45)),
+        Text(DateFormat('HH:mm').format(event.end),
+            style: TextStyle(color: Colors.black45)),
       ]),
       title: Wrap(
           spacing: 8.0,
