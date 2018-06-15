@@ -1,12 +1,14 @@
 import 'package:dation_app/agenda_page.dart';
-import 'package:dation_app/course_instances_page.dart';
 import 'package:dation_app/dation_ws_client.dart';
 import 'package:dation_app/login_page.dart';
-import 'package:dation_app/students_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dation_app/dation_models.dart';
 
 final String _wsHost = 'https://dashboard.dation.nl';
+
+const _dationPurple = Color(0xFF561D9F);
+const _dationRed = Color(0xFFFF5D51);
+const _dationBlue = Color(0xFF66BBD4);
 
 void main() {
   runApp(MyApp());
@@ -20,9 +22,9 @@ class MyApp extends StatelessWidget {
       title: 'Dation',
       theme: ThemeData(
         primarySwatch: Colors.purple,
-        primaryColor: Colors.purple[800],
-        splashColor: Colors.redAccent,
-        buttonColor: Colors.lightBlue[200],
+        primaryColor: _dationPurple,
+        splashColor: _dationRed,
+        buttonColor: _dationBlue,
       ),
       home: LoginPage(), //HomePage());
     );
