@@ -193,6 +193,7 @@ class MetaAppointmentDetailsPage extends StatelessWidget {
         if (!snapshot.hasData)
           // Shows progress indicator until the data is load.
           return Scaffold(
+            appBar: AppBar(title: Text('Afspraak')),
             body: PageLoadingIndicator('Details ophalen...'),
           );
 
