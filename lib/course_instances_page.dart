@@ -1,5 +1,5 @@
-import 'package:dation_app/dation_rest_api_client.dart';
-import 'package:dation_app/generic_pages.dart';
+import 'package:instructorapp/dation_rest_api_client.dart';
+import 'package:instructorapp/generic_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

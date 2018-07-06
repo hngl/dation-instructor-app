@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:dation_app/dation_models.dart';
+import 'package:instructorapp/dation_models.dart';
 import 'package:xml/xml.dart' as xml;
 import 'package:flutter/foundation.dart';
 import 'soap_client.dart';

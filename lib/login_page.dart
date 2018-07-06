@@ -1,4 +1,4 @@
-import 'package:dation_app/main.dart';
+import 'package:instructorapp/main.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {

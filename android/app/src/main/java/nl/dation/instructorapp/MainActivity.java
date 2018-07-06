@@ -1,4 +1,4 @@
-package nl.dation.dationapp;
+package nl.dation.instructorapp;
 
 import android.os.Bundle;
 

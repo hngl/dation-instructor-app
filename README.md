@@ -1,6 +1,6 @@
-# dation_app
+# Dation Instructor App
 
-Dation App
+This is the sexy replacement of http://mobile.dation.nl .
 
 ## Getting Started
 

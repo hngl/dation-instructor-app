@@ -1,5 +1,5 @@
-name: dation_app
-description: Dation App
+name: instructorapp
+description: Dation Instructor App
 
 dependencies:
   flutter:
