@@ -1,19 +1,30 @@
-import 'package:instructorapp/main.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:instructorapp/main.dart';
 
 class LoginPage extends StatefulWidget {
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+  LoginPage({Key key, this.analytics, this.observer}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
-    return _LoginPageState();
+    return _LoginPageState(analytics, observer);
   }
 }
 
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
+  final FirebaseAnalyticsObserver observer;
+  final FirebaseAnalytics analytics;
 
   String _username;
   String _password;
   String _handle;
+
+  _LoginPageState(this.analytics, this.observer);
 
   void _submit() {
     final form = formKey.currentState;
@@ -21,6 +32,11 @@ class _LoginPageState extends State<LoginPage> {
     if (form.validate()) {
       form.save();
     }
+
+    // Log usage
+    analytics.setUserId("$_username@$_handle");
+    analytics.setUserProperty(name: 'handle', value: _handle);
+    analytics.logLogin();
 
     debugPrint("Submitted $_username@$_handle:$_password");
     onAuthStateChanged();

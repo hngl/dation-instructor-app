@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:instructorapp/agenda_page.dart';
 import 'package:instructorapp/dation_ws_client.dart';
 import 'package:instructorapp/login_page.dart';
-import 'package:flutter/material.dart';
 import 'package:instructorapp/dation_models.dart';
 
 final String _wsHost = 'https://dashboard.dation.nl';
@@ -14,19 +16,28 @@ void main() {
   runApp(MyApp());
 }
 
+/// This widget is the root of the application.
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  static FirebaseAnalytics analytics = new FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer = new FirebaseAnalyticsObserver(analytics: analytics);
+
   @override
   Widget build(BuildContext context) {
+    analytics.logAppOpen();
+
     return MaterialApp(
       title: 'Dation',
+      navigatorObservers: <NavigatorObserver>[observer],
       theme: ThemeData(
         primarySwatch: Colors.purple,
         primaryColor: _dationPurple,
         splashColor: _dationRed,
         buttonColor: _dationBlue,
       ),
-      home: LoginPage(), //HomePage());
+      home: LoginPage(
+        analytics: analytics,
+        observer: observer,
+      ), //HomePage());
     );
   }
 }

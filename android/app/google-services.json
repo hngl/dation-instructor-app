@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "654654635681",
+    "firebase_url": "https://dation-instructor-app.firebaseio.com",
+    "project_id": "dation-instructor-app",
+    "storage_bucket": "dation-instructor-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654654635681:android:3921507ac927f910",
+        "android_client_info": {
+          "package_name": "nl.dation.instructorapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654654635681-c9qe1erqu69flfg9vdgcak2hmp0mn3t6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0mxwJZmFxPwds-uajNtD7Cw5MCBUvnaM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
