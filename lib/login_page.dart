@@ -113,7 +113,10 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 'Aanmelden',
                                 style: TextStyle(
-                                    color: Theme.of(context).primaryColor, fontSize: 16.0),
+                                  fontFamily: 'Nutmeg',
+                                  color: Theme.of(context).primaryColor,
+                                  fontSize: 16.0,
+                                ),
                               ),
                             ),
                             shape: RoundedRectangleBorder(

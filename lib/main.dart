@@ -19,7 +19,8 @@ void main() {
 /// This widget is the root of the application.
 class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = new FirebaseAnalytics();
-  static FirebaseAnalyticsObserver observer = new FirebaseAnalyticsObserver(analytics: analytics);
+  static FirebaseAnalyticsObserver observer =
+      new FirebaseAnalyticsObserver(analytics: analytics);
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         primaryColor: _dationPurple,
         splashColor: _dationRed,
         buttonColor: _dationBlue,
+        fontFamily: 'Nutmeg'
       ),
       home: LoginPage(
         analytics: analytics,
@@ -100,7 +102,10 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         // here we display the title corresponding to the fragment
         // you can instead choose to have a static title
-        title: Text(widget.drawerItems[_selectedDrawerIndex].title),
+        title: Text(
+          widget.drawerItems[_selectedDrawerIndex].title,
+          style: TextStyle(fontFamily: 'Nutmeg'),
+        ),
       ),
       drawer: Drawer(
         child: Column(

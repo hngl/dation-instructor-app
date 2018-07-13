@@ -67,3 +67,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies, 
   # see https://flutter.io/custom-fonts/#from-packages
+
+  # No spaces in font file names!
+
+  fonts:
+    # The default Dation font
+    - family: Nutmeg
+      fonts:
+        - asset: 'fonts/nutmeg/Nutmeg-Regular.otf'
+
