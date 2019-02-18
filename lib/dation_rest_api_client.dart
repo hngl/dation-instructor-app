@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 Future<List<CourseInstance>> getCourseInstances() async {
-  final String endpoint = 'http://192.168.133.236:1001/api/v1/course-instances';
-  final String basicKey = 'lydjV2Y6DrLGiBg/BlYPpQxZqS8cL8My3rd8GJw7hvY=';
+  final String endpoint = 'http://localhost:1001/api/v1/course-instances';
+  final String basicKey = 'not-a-real-key';
 
   try {
     var response = await http.get(

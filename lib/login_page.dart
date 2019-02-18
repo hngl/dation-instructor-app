@@ -85,20 +85,20 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         children: <Widget>[
                           TextFormField(
-                            initialValue: 'dation',
+                            initialValue: '',
                             onSaved: (val) => _handle = val,
                             decoration: InputDecoration(labelText: "Rijschool"),
                           ),
                           SizedBox(height: 12.0),
                           TextFormField(
-                            initialValue: 'beheerder',
+                            initialValue: '',
                             onSaved: (val) => _username = val,
                             decoration:
                                 InputDecoration(labelText: "Gebruikersnaam"),
                           ),
                           SizedBox(height: 12.0),
                           TextFormField(
-                            initialValue: 'beheerder12',
+                            initialValue: '',
                             obscureText: true,
                             onSaved: (val) => _password = val,
                             decoration:
